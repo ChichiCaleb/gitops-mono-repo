@@ -13,6 +13,16 @@ const {
   orgUserTypeEmbedRoutePath,
 } = require("./pagesAndRewritePaths");
 
+
+const path = require ('node:path') ;
+const url = require  ('node:url');
+
+const workspaceRoot = path.resolve(
+  path.dirname(url.fileURLToPath(require('url').pathToFileURL(__filename).toString())),
+  '..',
+  '..'
+);
+
 if (!process.env.NEXTAUTH_SECRET) throw new Error("Please set NEXTAUTH_SECRET");
 if (!process.env.CALENDSO_ENCRYPTION_KEY) throw new Error("Please set CALENDSO_ENCRYPTION_KEY");
 const isOrganizationsEnabled =
@@ -154,9 +164,22 @@ const matcherConfigUserTypeEmbedRoute = {
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  outputFileTracing: true ,
+  swcMinify: true,
+  httpAgentOptions: { keepAlive: true},
+  optimizeFonts: false,
+  
   experimental: {
-    serverComponentsExternalPackages: ["next-i18next"],
-  },
+      
+      outputFileTracingRoot: workspaceRoot ,
+      esmExternals: true,
+     
+      externalDir: true,
+
+      serverComponentsExternalPackages: ["next-i18next"],
+    },
+  
   i18n: {
     ...i18n,
     localeDetection: false,

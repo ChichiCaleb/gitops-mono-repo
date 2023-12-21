@@ -17,7 +17,8 @@
     "lint": "eslint . --ignore-path .gitignore",
     "lint:fix": "eslint . --ext .ts,.js,.tsx,.jsx --fix",
     "lint:report": "eslint . --format json --output-file ../../lint-results/web.json",
-    "check-changed-files": "ts-node scripts/ts-check-changed-files.ts"
+    "check-changed-files": "ts-node scripts/ts-check-changed-files.ts",
+    "docker-start-web": "npx prisma migrate deploy --schema /app/packages/prisma/schema.prisma && npx ts-node --transpile-only /app/packages/prisma/seed-app-store.ts && node /app/apps/web/server.js"
   },
   "engines": {
     "node": "18",
