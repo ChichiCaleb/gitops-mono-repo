@@ -91,7 +91,7 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.ne
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 
-COPY packages/prisma /app/packages/prisma
+COPY ./packages/prisma /app/packages/prisma
 
 EXPOSE 3000
 
