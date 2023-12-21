@@ -71,6 +71,8 @@ FROM base as runner
 
 WORKDIR /app
 
+#  dependencies needed for prisma migration at runtime
+
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} && \
     TS_NODE_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["ts-node"]' -r) npm i ts-node@${TS_NODE_VERSION} && \
     TYPESCRIPT_VERSION=$(cat package.json | jq '.devDependencies["typescript"]' -r) npm i typescript@${TYPESCRIPT_VERSION} 
