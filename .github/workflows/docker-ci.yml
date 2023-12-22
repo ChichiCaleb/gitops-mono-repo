@@ -46,6 +46,8 @@ jobs:
           tags: |
             type=raw,value=99
         
+      - name: checkout
+        uses: actions/checkout@v3
       
       - name: Docker Build and Push  Docker Hub
         uses: docker/build-push-action@v5
