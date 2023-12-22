@@ -50,6 +50,8 @@ jobs:
       - name: Docker Build and Push  Docker Hub
         uses: docker/build-push-action@v5
         with:
+          context: ./
+          file: infra/docker/web/Dockerfile
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
