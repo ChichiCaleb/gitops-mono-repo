@@ -47,7 +47,7 @@ jobs:
           context: ./
           file: infra/docker/web/Dockerfile
           push: true
-          tags: ghcr.io/ChichiCaleb/calKube:${{ github.run_id }}
+          tags: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
           target: test
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -72,7 +72,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Unit Testing in Docker
-        run: docker run --rm ghcr.io/ChichiCaleb/calKube:"$GITHUB_RUN_ID" echo "yarn test"
+        run: docker run --rm ghcr.io/chichicaleb/calkube:"$GITHUB_RUN_ID" echo "yarn test"
 
 
 
@@ -107,12 +107,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull image to scan
-        run: docker pull ghcr.io/ChichiCaleb/calKube:"$GITHUB_RUN_ID"
+        run: docker pull ghcr.io/chichicaleb/calkube:"$GITHUB_RUN_ID"
         
       - name: Run Trivy for all CVEs (non-blocking)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/ChichiCaleb/calKube:${{ github.run_id }}
+          image-ref: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
           format: table
           exit-code: 0
 
@@ -120,7 +120,7 @@ jobs:
       - name: Run Trivy for HIGH,CRITICAL CVEs and report (blocking)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/ChichiCaleb/calKube:${{ github.run_id }}
+          image-ref: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
           exit-code: 1
           ignore-unfixed: true
           vuln-type: 'os,library'
@@ -173,7 +173,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: horizonclient/calkube,ghcr.io/ChichiCaleb/calKube
+          images: horizonclient/calkube,ghcr.io/chichicaleb/calkube
           flavor: |
             latest=false
           tags: |
