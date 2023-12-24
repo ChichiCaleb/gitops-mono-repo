@@ -1,5 +1,5 @@
 ---
-name: DOcker CI
+name: Docker CI
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre Build
-        run: "docker system prune --volume -af"
+        run: "docker image prune"
 
     
    
@@ -190,7 +190,7 @@ jobs:
             type=semver,pattern={{version}}
 
       - name: Pre Build
-        run: "docker system prune --volume -af"
+        run:  "docker image prune"
 
       - name: Docker Build and Push to GHCR and Docker Hub
         uses: docker/build-push-action@v5
