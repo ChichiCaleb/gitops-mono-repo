@@ -39,7 +39,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre Build
-        run: "docker system prune -af"
+        run: "docker system prune --volume -af"
+
+    
    
         
       - name: Build and Push to GHCR
@@ -50,8 +52,8 @@ jobs:
           push: true
           tags: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
           
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
           platforms: linux/amd64
          
             
@@ -188,7 +190,7 @@ jobs:
             type=semver,pattern={{version}}
 
       - name: Pre Build
-        run: "docker system prune -af"
+        run: "docker system prune --volume -af"
 
       - name: Docker Build and Push to GHCR and Docker Hub
         uses: docker/build-push-action@v5
@@ -198,8 +200,8 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64,linux/arm/v7
         
 
