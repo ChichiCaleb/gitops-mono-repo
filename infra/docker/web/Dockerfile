@@ -9,7 +9,7 @@ RUN set -eux; \
 
 # ensure that both local and docker turbo are aligned on the package.json version.
 RUN TURBO_VERSION=$(cat package.json | jq '.dependencies["turbo"]' -r) npm i -g turbo@${TURBO_VERSION}
-RUN npm install --global yarn@3.4.1
+RUN npm i -g yarn@3.4.1
 
 #############################################
 FROM base as builder
