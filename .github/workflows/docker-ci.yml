@@ -100,6 +100,8 @@ jobs:
 
     permissions:
       packages: read
+      contents: read
+     
 
     steps:
 
@@ -123,7 +125,7 @@ jobs:
         run: |
           export TESTING_IMAGE=ghcr.io/chichicaleb/calkube:"$GITHUB_RUN_ID"
           echo Testing image: "$TESTING_IMAGE"
-          docker compose -f ./infra/web/docker-compose-test.yml up --exit-code-from sut
+          docker compose -f infra/web/docker-compose-test.yml up --exit-code-from sut
 
 
 
@@ -133,10 +135,15 @@ jobs:
     needs: [build-test-image]
     runs-on: ubuntu-latest
 
+    # permissions:
+    #   contents: read # for actions/checkout to fetch code
+    #   packages: read # needed to pull docker image to ghcr.io
+    #   security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
     permissions:
-      contents: read # for actions/checkout to fetch code
-      packages: read # needed to pull docker image to ghcr.io
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+     actions: read
+     contents: read
+     security-events: write
+ 
 
     steps:
 
