@@ -1,5 +1,5 @@
 ---
-name: CI
+name:  CI
 
 on:
   push:
@@ -19,6 +19,10 @@ jobs:
       packages: write # needed to push docker image to ghcr.io
 
     steps:
+      
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+
       - name: checkout
         uses: actions/checkout@v3
 
@@ -58,8 +62,7 @@ jobs:
           file: infra/docker/web/Dockerfile
           push: true
           tags: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
-          build-args: |
-            DOCKER_BUILDKIT=1
+         
           
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -183,6 +186,8 @@ jobs:
       pull-requests: write # needed to create and update comments in PRs
 
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
     
       - name: checkout
         uses: actions/checkout@v3
@@ -244,8 +249,7 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: |
-            DOCKER_BUILDKIT=1
+         
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64,linux/arm/v7
