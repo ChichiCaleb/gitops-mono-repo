@@ -200,9 +200,9 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      # - name: create custom network
-      #   run : |
-      #     docker network create stack 
+      - name: create custom network
+        run : |
+          docker network create stack 
       #     docker buildx prune --filter="until=1h" --force 
 
       - name: Set up Docker Buildx
