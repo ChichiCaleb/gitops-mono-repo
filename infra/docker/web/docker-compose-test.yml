@@ -1,0 +1,23 @@
+services:
+  calkube:
+    image: "${TESTING_IMAGE}"
+  
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./healthchecks:/healthchecks
+    healthcheck:
+      test: /postgres-healthcheck
+      interval: "5s"
+  sut:
+    image: "${TESTING_IMAGE}"
+    depends_on:
+      calkube:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    # run all your tests here against the calkube service
+    command: curl --fail http://calkube:3000 || exit 1
