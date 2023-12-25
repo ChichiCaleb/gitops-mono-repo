@@ -235,7 +235,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: horizonclient/calkube,ghcr.io/chichicaleb/calkube
+          images: horizonclient/calkube
           flavor: |
             latest=false
           tags: |

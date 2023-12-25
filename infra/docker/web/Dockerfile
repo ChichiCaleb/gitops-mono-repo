@@ -9,6 +9,7 @@ RUN set -eux; \
 
 # ensure that both local and docker turbo are aligned on the package.json version.
 RUN TURBO_VERSION=$(cat package.json | jq '.dependencies["turbo"]' -r) npm i -g turbo@${TURBO_VERSION}
+RUN npm install --global yarn@3.4.1
 
 #############################################
 FROM base as builder
@@ -70,6 +71,7 @@ RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 FROM base as runner
 
 WORKDIR /app
+
 
 #  dependencies needed for prisma migration at runtime
 
