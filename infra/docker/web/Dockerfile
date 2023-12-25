@@ -1,4 +1,4 @@
-FROM node:20.7-slim as base
+FROM node:18-slim as base
 
 RUN set -eux; \
     apt-get update -qq && \
