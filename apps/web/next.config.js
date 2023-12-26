@@ -173,7 +173,7 @@ const nextConfig = {
   experimental: {
       
       outputFileTracingRoot: workspaceRoot ,
-      esmExternals: true,
+      // esmExternals: true,
      
       externalDir: true,
 
