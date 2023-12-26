@@ -21,8 +21,8 @@
     "docker-start-web": "npx prisma migrate deploy --schema /app/packages/prisma/schema.prisma && npx ts-node --transpile-only /app/packages/prisma/seed-app-store.ts && node /app/apps/web/server.js"
   },
   "engines": {
-    "node": "18",
-    "yarn": "3.4.1"
+    "node": "18"
+    
   },
   "dependencies": {
     "@boxyhq/saml-jackson": "1.8.2",
