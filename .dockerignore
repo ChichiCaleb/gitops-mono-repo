@@ -1,5 +1,5 @@
 .git
 .github
-.env.example
+.env
 node_modules
 **/node_modules

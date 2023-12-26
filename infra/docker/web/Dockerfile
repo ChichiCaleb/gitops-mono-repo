@@ -75,10 +75,8 @@ WORKDIR /app
 
 #  dependencies needed for prisma migration at runtime
 
-RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} && \
-    TS_NODE_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["ts-node"]' -r) npm i ts-node@${TS_NODE_VERSION} && \
-    TYPESCRIPT_VERSION=$(cat package.json | jq '.devDependencies["typescript"]' -r) npm i typescript@${TYPESCRIPT_VERSION} 
-     
+RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
+
     
    
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
@@ -93,7 +91,7 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.ne
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 
-COPY packages/prisma /app/packages/prisma
+COPY packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
 
 EXPOSE 3000
 
