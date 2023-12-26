@@ -10,62 +10,59 @@ on:
 
 jobs:
 # # FIRST JOB #######################################################################   
-#   build-test-image:
-#     name: Build Image for Testing
-#     runs-on: ubuntu-latest
+  build-test-image:
+    name: Build Image for Testing
+    runs-on: ubuntu-latest
 
-#     permissions:
-#       contents: read
-#       packages: write # needed to push docker image to ghcr.io
+    permissions:
+      contents: read
+      packages: write # needed to push docker image to ghcr.io
 
-#     steps:
+    steps:
       
     
 
-#       - name: checkout
-#         uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v3
 
-#       # - name: create custom network
-#       #   run : |
-#       #     docker network create stack
-#       #     docker buildx prune --filter="until=1h" --force
+      - name: create custom network
+        run : |
+          docker network create stack
 
-#       # - name: Set up Docker Buildx
-#       #   uses: docker/setup-buildx-action@v3
-#       #   with:
-#       #     driver-opts: |
-#       #       network=stack
-        
-#       #     buildkitd-flags: |
-#       #       --allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host
-#       #       --oci-worker-gc=false 
 
-#       - name: Login to Docker Hub
-#         uses: docker/login-action@v3
-#         with:
-#           username: ${{ secrets.DOCKERHUB_USERNAME }}
-#           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            network=stack
 
-#       - name: Login to ghcr.io registry
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ghcr.io
-#           username: ${{ github.actor }}
-#           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to ghcr.io registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
         
-#       - name: Build and Push to GHCR
-#         uses: docker/build-push-action@v5
-#         with:
-#           context: ./
-#           file: infra/docker/web/Dockerfile
-#           push: true
-#           tags: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
+      - name: Build and Push to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: ./
+          file: infra/docker/web/Dockerfile
+          push: true
+          tags: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
          
           
-#           # cache-from: type=gha
-#           # cache-to: type=gha,mode=max
-#           platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
          
             
 
@@ -197,13 +194,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
-      # - name: Set up QEMU
-      #   uses: docker/setup-qemu-action@v3
 
       - name: create custom network
         run : |
           docker network create stack 
-      #     docker buildx prune --filter="until=1h" --force 
+   
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -211,9 +206,7 @@ jobs:
           driver-opts: |
             network=stack
         
-      #     buildkitd-flags: |
-      #       --allow-insecure-entitlement security.insecure --allow-insecure-entitlement network.host 
-      #       --oci-worker-gc=false 
+    
 
     
         
@@ -258,7 +251,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
-          # ,linux/arm64,linux/arm/v7
+         
         
 
         # If PR, put image tags in the PR comments
