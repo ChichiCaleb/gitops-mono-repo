@@ -31,13 +31,11 @@ jobs:
         id: docker_meta  
         uses: docker/metadata-action@v5
         with:
-         images: ghcr.io/${{ github.repository }}
+         images: ghcr.io/chichicaleb/calkube
 
          tags: |
             ${{ github.run_id }}
-            type=raw,value=latest,enable={{is_default_branch}}
-            # type=sha,prefix={{branch}}-,suffix=-{{date 'X'}}
-
+           
 
  
         
@@ -78,7 +76,7 @@ jobs:
           push: true
           
           tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+         
          
           
           cache-from: type=gha
@@ -107,7 +105,7 @@ jobs:
           password:  ${{ secrets.GITHUB_TOKEN }}
       
       - name: Unit Testing in Docker
-        run: docker run --rm ghcr.io/${{ github.repository }}:"$GITHUB_RUN_ID" echo "yarn test"
+        run: docker run --rm ghcr.io/chichicaleb/calkube:"$GITHUB_RUN_ID" echo "yarn test"
 
 
 # # NEXT JOB #######################################################################   
