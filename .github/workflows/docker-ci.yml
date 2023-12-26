@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      # contents: read
       packages: write # needed to push docker image to ghcr.io
 
     steps:
