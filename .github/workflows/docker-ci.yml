@@ -67,7 +67,7 @@ jobs:
           file: infra/docker/web/Dockerfile
           push: true
           
-          tags: ghcr.io/${{ github.repository }}:${{ github.run_id }}
+          tags: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
 
          
           
@@ -79,32 +79,32 @@ jobs:
 
     
 #  # NEXT JOB #######################################################################   
-  # test-unit:
-  #   name: Unit tests in Docker
-  #   needs: [build-test-image]
-  #   runs-on: ubuntu-latest
+  test-unit:
+    name: Unit tests in Docker
+    needs: [build-test-image]
+    runs-on: ubuntu-latest
 
-  #   permissions:
-  #     packages: read
+    permissions:
+      packages: read
       
-  #   steps:
+    steps:
       
-  #     - name: Login to ghcr.io registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to ghcr.io registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Login to ghcr.io registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.repository_owner }}
-  #         password:  ${{ secrets.GITHUB_TOKEN }}   
+      - name: Login to ghcr.io registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password:  ${{ secrets.GITHUB_TOKEN }}   
       
-  #     - name: Unit Testing in Docker
-  #       run: docker run --rm ghcr.io/${{ github.repository }}:"$GITHUB_RUN_ID" echo "yarn test"
+      - name: Unit Testing in Docker
+        run: docker run --rm ghcr.io/chichicaleb/calkube:"$GITHUB_RUN_ID" echo "yarn test"
 
 
 # # NEXT JOB #######################################################################   
