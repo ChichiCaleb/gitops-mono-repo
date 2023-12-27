@@ -79,7 +79,7 @@ RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prism
 RUN VITEST_VERSION=$(cat package.json | jq '.devDependencies["vitest"]' -r) npm i vitest@${VITEST_VERSION} 
 RUN VITEST_FETCH_MOCK_VERSION=$(cat package.json | jq '.devDependencies["vitest-fetch-mock"]' -r) npm i vitest-fetch-mock@${VITEST_FETCH_MOCK_VERSION} 
 RUN VITEST_MOCK_EXTENDED_VERSION=$(cat package.json | jq '.devDependencies["vitest-mock-extended"]' -r) npm i vitest-mock-extended@${VITEST_MOCK_EXTENDED_VERSION} 
-    
+RUN npm i is-stream
    
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
                     /app/apps/web/next-i18next.config.js \
