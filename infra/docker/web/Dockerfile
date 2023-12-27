@@ -101,6 +101,7 @@ COPY --from=builder --chown=node:node /app/setupVitest.ts ./setupVitest.ts
 COPY --from=builder --chown=node:node /app/vitest.config.ts ./vitest.config.ts 
 COPY --from=builder --chown=node:node /app/vitest.workspace.ts ./vitest.workspace.ts
 COPY --from=builder --chown=node:node /app/packages ./packages
+COPY --from=builder --chown=node:node /app/apps/web ./apps/web
 
 
 COPY packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
