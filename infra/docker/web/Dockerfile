@@ -94,7 +94,7 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.ne
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 #  needed for CI unit test
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+# COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 COPY --from=builder --chown=node:node /app/apps/web/test ./apps/web/test
 COPY --from=builder --chown=node:node /app/tests ./tests
 COPY --from=builder --chown=node:node /app/setupVitest.ts ./setupVitest.ts
