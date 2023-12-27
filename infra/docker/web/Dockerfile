@@ -92,8 +92,14 @@ COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
 COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 
+#  needed for CI unit test
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/apps/web/test ./apps/web/test
+COPY --from=builder --chown=node:node /app/tests ./tests
+COPY --from=builder --chown=node:node /app/setupVitest.ts ./setupVitest.ts
+COPY --from=builder --chown=node:node /app/vitest.config.ts ./vitest.config.ts 
+COPY --from=builder --chown=node:node /app/vitest.workspace.ts ./vitest.workspace.ts
 
 
 COPY packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
