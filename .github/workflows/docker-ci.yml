@@ -107,7 +107,7 @@ jobs:
 
       - name: Downcase repo name
         run: |
-         echo "REPO=${github.repository ,,}" >>${GITHUB_ENV}
+         echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
       
       - name: Unit Testing in Docker
         run: docker run --rm ghcr.io/${REPO}:"$GITHUB_RUN_ID" echo "yarn test"
