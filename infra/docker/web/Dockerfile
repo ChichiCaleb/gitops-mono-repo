@@ -85,12 +85,15 @@ COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
                     /app/apps/web/next-i18next.config.js \
                     /app/apps/web/package.json \
                     ./
-             
+
+
 
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+
 
 
 COPY packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
