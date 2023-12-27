@@ -104,9 +104,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password:  ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Downcase repo name
+        run: |
+         echo "REPO=${github.repository ,,}" >>${GITHUB_ENV}
       
       - name: Unit Testing in Docker
-        run: docker run --rm ghcr.io/ echo "${github.repository,,}":"$GITHUB_RUN_ID" echo "yarn test"
+        run: docker run --rm ghcr.io/${REPO}:"$GITHUB_RUN_ID" echo "yarn test"
 
 
 # # NEXT JOB #######################################################################   
