@@ -1,6 +1,9 @@
 services:
   calkube:
     image: "${TESTING_IMAGE}"
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
   
   postgres:
     image: postgres
