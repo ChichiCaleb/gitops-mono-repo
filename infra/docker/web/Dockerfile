@@ -73,13 +73,12 @@ FROM base as runner
 WORKDIR /app
 
 
-#  dependencies needed for prisma migration at runtime
+#  needed dependencies for prisma migration at runtime and CI unit test
+RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
+RUN VITEST_VERSION=$(cat package.json | jq '.devDependencies["vitest"]' -r) npm i vitest@${VITEST_VERSION} 
+RUN VITEST_FETCH_MOCK_VERSION=$(cat package.json | jq '.devDependencies["vitest-fetch-mock"]' -r) npm i vitest-fetch-mock@${VITEST_FETCH_MOCK_VERSION} 
+RUN VITEST_MOCK_EXTENDED_VERSION=$(cat package.json | jq '.devDependencies["vitest-mock-extended"]' -r) npm i vitest-mock-extended@${VITEST_MOCK_EXTENDED_VERSION} 
 
-# RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
-# RUN VITEST_VERSION=$(cat package.json | jq '.devDependencies["vitest"]' -r) npm i vitest@${VITEST_VERSION} 
-# RUN VITEST_FETCH_MOCK_VERSION=$(cat package.json | jq '.devDependencies["vitest-fetch-mock"]' -r) npm i vitest-fetch-mock@${VITEST_FETCH_MOCK_VERSION} 
-# RUN VITEST_MOCK_EXTENDED_VERSION=$(cat package.json | jq '.devDependencies["vitest-mock-extended"]' -r) npm i vitest-mock-extended@${VITEST_MOCK_EXTENDED_VERSION} 
-# RUN npm i is-stream
 
 
    
