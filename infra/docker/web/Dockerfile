@@ -73,30 +73,19 @@ FROM base as runner
 WORKDIR /app
 
 
-#  needed dependencies for prisma migration at runtime and CI unit test
-RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
-RUN VITEST_VERSION=$(cat package.json | jq '.devDependencies["vitest"]' -r) npm i vitest@${VITEST_VERSION} 
-RUN VITEST_FETCH_MOCK_VERSION=$(cat package.json | jq '.devDependencies["vitest-fetch-mock"]' -r) npm i vitest-fetch-mock@${VITEST_FETCH_MOCK_VERSION} 
-RUN VITEST_MOCK_EXTENDED_VERSION=$(cat package.json | jq '.devDependencies["vitest-mock-extended"]' -r) npm i vitest-mock-extended@${VITEST_MOCK_EXTENDED_VERSION} 
+#  dependencies needed for prisma migration at runtime
 
-
-
+# RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
+# RUN VITEST_VERSION=$(cat package.json | jq '.devDependencies["vitest"]' -r) npm i vitest@${VITEST_VERSION} 
+# RUN VITEST_FETCH_MOCK_VERSION=$(cat package.json | jq '.devDependencies["vitest-fetch-mock"]' -r) npm i vitest-fetch-mock@${VITEST_FETCH_MOCK_VERSION} 
+# RUN VITEST_MOCK_EXTENDED_VERSION=$(cat package.json | jq '.devDependencies["vitest-mock-extended"]' -r) npm i vitest-mock-extended@${VITEST_MOCK_EXTENDED_VERSION} 
+    
    
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
                     /app/apps/web/next-i18next.config.js \
                     /app/apps/web/package.json \
-                    /app/node_modules \
                     ./
 
-#  needed for CI unit test
-COPY --from=builder --chown=node:node /app/tests \
-                                /app/apps/web/test  \
-                                 /app/setupVitest.ts \
-                                 /app/vitest.config.ts \
-                                 /app/vitest.workspace.ts \
-                                  /app/apps/web \
-                                  /app/packages \
-                                  ./
 
 
 # Automatically leverage output traces to reduce image size
@@ -104,7 +93,17 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
-# # needed for prisma db deployment at runtime
+#  needed for CI unit test
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/apps/web/test ./apps/web/test
+COPY --from=builder --chown=node:node /app/tests ./tests
+COPY --from=builder --chown=node:node /app/setupVitest.ts ./setupVitest.ts
+COPY --from=builder --chown=node:node /app/vitest.config.ts ./vitest.config.ts 
+COPY --from=builder --chown=node:node /app/vitest.workspace.ts ./vitest.workspace.ts
+COPY --from=builder --chown=node:node /app/packages ./packages
+COPY --from=builder --chown=node:node /app/apps/web ./apps/web
+
+
 # COPY packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
 
 EXPOSE 3000
