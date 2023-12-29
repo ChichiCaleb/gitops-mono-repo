@@ -1,3 +1,8 @@
+networks:
+  stack:
+    name: stack
+    external: false
+
 services:
   calkube:
     image: "${TESTING_IMAGE}"
@@ -6,8 +11,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
       - NEXTAUTH_SECRET=EI4qqDpcfdvf4A+0aQEEx8JjHxHSy4uWiZw/F32K+pA=
       - CALENDSO_ENCRYPTION_KEY=0zfLtY99wjeLnsM7qsa8xsT+Q0oSgnOL
-    # networks:
-    #   - stack
+    networks:
+      - stack
   
   postgres:
     image: postgres
@@ -17,10 +22,10 @@ services:
     volumes:
       - ./healthchecks:/healthchecks
     healthcheck:
-      test: /postgres-healthcheck
+      test: integration-test/postgres-healthcheck
       interval: "5s"
-    # networks:
-    #   - stack
+    networks:
+      - stack
   sut:
     image: "${TESTING_IMAGE}"
     depends_on:
@@ -29,5 +34,5 @@ services:
       postgres:
         condition: service_healthy
     # run all your tests here against the calkube service
-    command:  curl --fail-with-body http://calkube:3000 || exit 1
+    command:  curl --fail-with-body http://calkube:3000/auth/login || exit 1
     
