@@ -1,8 +1,13 @@
 services:
   calkube:
     image: "${TESTING_IMAGE}"
+    env_file: .env
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
+      - NEXTAUTH_SECRET=EI4qqDpcfdvf4A+0aQEEx8JjHxHSy4uWiZw/F32K+pA=
+      - CALENDSO_ENCRYPTION_KEY=0zfLtY99wjeLnsM7qsa8xsT+Q0oSgnOL
+    networks:
+      - stack
   
   postgres:
     image: postgres
@@ -14,6 +19,8 @@ services:
     healthcheck:
       test: /postgres-healthcheck
       interval: "5s"
+    networks:
+      - stack
   sut:
     image: "${TESTING_IMAGE}"
     depends_on:
@@ -22,4 +29,21 @@ services:
       postgres:
         condition: service_healthy
     # run all your tests here against the calkube service
-    command: curl --fail http://calkube:3000/auth/login || exit 1
+    command: |
+      # curl --fail http://calkube:3000 || exit 1
+       for i in {1..60}; do
+              echo "Checking server health ($i/60)..."
+              response=$(curl -o /dev/null -s -w "%{http_code}" calkube:3000/auth/login)
+              echo "HTTP Status Code: $response"
+              if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
+                echo "Server is healthy"
+                # Now, shutdown the server
+                kill $server_pid
+                exit 0
+              fi
+              sleep 1
+            done
+        
+            echo "Server health check failed"
+            kill $server_pid
+            exit 1
