@@ -68,11 +68,11 @@ RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
    
 
 #############################################
-FROM builder as test
+FROM base as test
 
 WORKDIR /app
 
-COPY --from=builder . .
+COPY --from=builder app/. .
 
 RUN yarn test
 
@@ -98,8 +98,8 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
-
-COPY packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
+# prisma schema to be loaded at runtime
+COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
 
 EXPOSE 3000
 

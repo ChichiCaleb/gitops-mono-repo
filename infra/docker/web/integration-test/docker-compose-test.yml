@@ -30,9 +30,9 @@ services:
     image: "${TESTING_IMAGE}"
     depends_on:
       calkube:
-        condition: service_started
+        condition: service_completed_successfully
       postgres:
-        condition: service_healthy
+        condition: service_completed_successfully
     # run all your tests here against the calkube service
     command:  curl --fail-with-body http://calkube:3000/auth/login || exit 1
     
