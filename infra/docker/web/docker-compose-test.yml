@@ -29,21 +29,5 @@ services:
       postgres:
         condition: service_healthy
     # run all your tests here against the calkube service
-    command: |
-      # curl --fail http://calkube:3000 || exit 1
-       for i in {1..60}; do
-              echo "Checking server health ($i/60)..."
-              response=$(curl -o /dev/null -s -w "%{http_code}" calkube:3000/auth/login)
-              echo "HTTP Status Code: $response"
-              if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
-                echo "Server is healthy"
-                # Now, shutdown the server
-                kill $server_pid
-                exit 0
-              fi
-              sleep 1
-            done
-        
-            echo "Server health check failed"
-            kill $server_pid
-            exit 1
+    command:  curl --fail-with-body http://calkube:3000 || exit 1
+    
