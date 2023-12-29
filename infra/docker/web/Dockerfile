@@ -64,13 +64,15 @@ RUN yarn config set httpTimeout 1200000 && \
 
 RUN  turbo run build --filter=@calcom/web... 
 
-RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
+# RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
    
 
 #############################################
 FROM base as test
 
 WORKDIR /app
+
+RUN echo "yeaaaaaaaaaaaaaaaaaaaa"
 
 COPY --from=builder app/. .
 
@@ -100,6 +102,8 @@ COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 # prisma schema to be loaded at runtime
 COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
+
+
 
 EXPOSE 3000
 
