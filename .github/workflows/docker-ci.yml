@@ -199,7 +199,7 @@ jobs:
             --docker-username=${{ github.repository_owner }} \
             --docker-password=${{ secrets.GITHUB_TOKEN }}
           export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7364364638
-          envsubst < infra/docker/web/manifest/deployment.yaml  | kubectl apply -f -
+          envsubst < infra/docker/web/manifest/deployment.yml  | kubectl apply -f -
           kubectl rollout status deployment calcom
           kubectl exec deploy/calcom -- curl --fail localhost:3000
 
