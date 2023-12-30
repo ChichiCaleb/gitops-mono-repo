@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calcom-dbcreation-script
+  namespace: dev
+data: 
+  postgres_calcom.sql: |-
+    DROP DATABASE IF EXISTS calcom;
+    CREATE DATABASE calcom; 

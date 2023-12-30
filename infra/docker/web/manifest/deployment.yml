@@ -1,0 +1,64 @@
+
+---
+
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: calcom
+  labels:
+    app: web
+  namespace: dev    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:  
+    metadata:
+      labels: 
+        app: web
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      initContainers:
+        - name: init-db
+          image: busybox:1.31
+          command: ['sh', '-c', 'echo -e "Checking for the availability of postgres Server deployment"; while ! nc -z postgres 5432; do sleep 1; printf "-"; done; echo -e "  >> Postgres DB Server has started";']      
+      containers:
+        - name: web
+          image: "${TESTING_IMAGE}"
+          imagePullPolicy: IfNotPresent
+          ports: 
+            - containerPort: 3000           
+          env:
+            - name: DB_HOSTNAME
+              value: "postgres"            
+            - name: DB_PORT
+              value: "5432"            
+            - name: DB_NAME
+              value: "calcom"            
+            - name: DB_USERNAME
+              value: "root"            
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-password
+                  key: db-password           
+          livenessProbe:
+            exec:
+              command: 
+                - /bin/sh
+                - -c 
+                - nc -z localhost 3000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /calcom/api/auth
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 10          
+          resources:
+            requests:
+              cpu: "8Gi" 
+              memory: "8Gi"

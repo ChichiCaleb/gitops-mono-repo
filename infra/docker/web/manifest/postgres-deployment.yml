@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: dev  
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate 
+  template: 
+    metadata: 
+      labels: 
+        app: postgres
+    spec: 
+      containers:
+        - name: postgres
+          image: postgres
+          env:
+            - name: POSTGRES_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-db-password
+                  key: db-password 
+          ports:
+            - containerPort: 5432
+              name: postgres    
+          volumeMounts:
+            - name: postgres-persistent-storage
+              mountPath: /var/lib/postgres    
+            - name: calcom-dbcreation-script
+              mountPath: /docker-entrypoint-initdb.d                                                  
+      

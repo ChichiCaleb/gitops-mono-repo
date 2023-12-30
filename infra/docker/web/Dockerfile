@@ -12,7 +12,7 @@ RUN TURBO_VERSION=$(cat package.json | jq '.dependencies["turbo"]' -r) npm i -g 
 
 
 #############################################
-FROM base as installer
+FROM base as builder
 
 
 # Optimize for YARN installation speed
@@ -62,27 +62,6 @@ RUN turbo prune --scope=@calcom/web --docker
 RUN yarn config set httpTimeout 1200000 && \ 
     yarn 
    
-#############################################
-FROM base as unit-test 
-
-WORKDIR /app
-
-ARG NEXTAUTH_SECRET=secret
-ARG CALENDSO_ENCRYPTION_KEY=secret
-
-COPY --from=installer /app/. .
-
-RUN yarn test
-
-#############################################
-FROM base as builder
-
-WORKDIR /app
-
-ARG NEXTAUTH_SECRET=secret
-ARG CALENDSO_ENCRYPTION_KEY=secret
-
-COPY --from=installer /app/. .
 
 RUN  turbo run build --filter=@calcom/web... 
 
@@ -90,16 +69,19 @@ RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
 
 #############################################
-FROM base as runner
+FROM node:18-slim as runner
 
 WORKDIR /app
 
-# Needed for prisma schema migration at runtime
+# Install packages needed for deployment
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y openssl && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+
+# dependency needed for prisma migration at runtime
 
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
-
-COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
-
 
 # chown to node default user/group
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
@@ -113,6 +95,9 @@ COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
 COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
+
+# prisma schema to be loaded at runtime
+COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
 
 EXPOSE 3000
 
