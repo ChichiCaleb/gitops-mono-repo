@@ -63,9 +63,12 @@ RUN yarn config set httpTimeout 1200000 && \
     yarn 
    
 #############################################
-FROM base as test 
+FROM base as unit-test 
 
 WORKDIR /app
+
+ARG NEXTAUTH_SECRET=secret
+ARG CALENDSO_ENCRYPTION_KEY=secret
 
 COPY --from=installer /app/. .
 
@@ -73,6 +76,11 @@ RUN yarn test
 
 #############################################
 FROM base as builder
+
+WORKDIR /app
+
+ARG NEXTAUTH_SECRET=secret
+ARG CALENDSO_ENCRYPTION_KEY=secret
 
 COPY --from=installer /app/. .
 
