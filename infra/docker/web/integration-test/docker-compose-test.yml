@@ -30,7 +30,7 @@ services:
     image: "${TESTING_IMAGE}"
     depends_on:
       calkube:
-        condition: service_completed_successfully
+        condition: service_healthy
       postgres:
         condition: service_healthy
     # run all your tests here against the calkube service
