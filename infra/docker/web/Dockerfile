@@ -69,6 +69,19 @@ RUN  yarn test
 
 RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
+#############################################
+FROM base as test
+
+COPY --from=builder /app/apps/web /app/apps/web 
+COPY --from=builder /app/packages /app/packages 
+COPY --from=builder /app/node_modules /app/node_modules 
+
+COPY --from=builder /app/setupVitest.ts /app/setupVitest.ts 
+COPY --from=builder /app/vitest.config.ts /app/vitest.config.ts 
+COPY --from=builder /app/vitest.workspace.ts /app/vitest.workspace.ts 
+
+
+RUN yarn test
 
 #############################################
 FROM base as runner
