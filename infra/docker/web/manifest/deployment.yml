@@ -7,7 +7,7 @@ metadata:
   name: calcom
   labels:
     app: web
-  namespace: dev    
+
 spec:
   replicas: 1
   selector:
