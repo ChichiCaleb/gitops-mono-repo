@@ -14,17 +14,17 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - ./healthchecks:/healthchecks
-    healthcheck:
-      test: integration-test/postgres-healthcheck
-      interval: "5s"
+    # healthcheck:
+    #   test: integration-test/postgres-healthcheck
+    #   interval: "5s"
   
   sut:
     image: "${TESTING_IMAGE}"
     depends_on:
       calkube:
         condition: service_healthy
-      postgres:
-        condition: service_completed_successfully
+      # postgres:
+      #   condition: service_completed_successfully
     # run all your tests here against the calkube service
     command:  curl --fail-with-body http://calkube:3000 || exit 1
     
