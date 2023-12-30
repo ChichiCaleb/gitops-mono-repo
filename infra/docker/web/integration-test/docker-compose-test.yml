@@ -16,7 +16,7 @@ services:
       - ./healthchecks:/healthchecks
 
     healthcheck:
-      test:  /healthchecks/postgres-healthcheck
+      test:  infra/docker/web/integration-test/healthchecks/postgres-healthcheck
       interval: "5s"
     networks:
       - stack
