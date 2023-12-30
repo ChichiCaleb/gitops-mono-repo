@@ -47,8 +47,8 @@ services:
     depends_on:
       calkube:
         condition: service_healthy
-      postgres:
-        condition: service_healthy
+      # postgres:
+      #   condition: service_healthy
    
     command:  curl --fail-with-body http://calkube:3000 || exit 1
     
