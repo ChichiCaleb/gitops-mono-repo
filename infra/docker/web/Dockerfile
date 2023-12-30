@@ -34,7 +34,7 @@ ARG NEXT_PUBLIC_LICENSE_CONSENT
 ARG CALCOM_TELEMETRY_DISABLED
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
-ARG NEXTAUTH_URL=${NEXT_PUBLIC_WEBAPP_URL}
+ARG NEXTAUTH_URL=${NEXT_PUBLIC_WEBAPP_URL}/api/auth 
 ARG NEXTAUTH_SECRET=secret
 ARG CALENDSO_ENCRYPTION_KEY=secret
 ARG MAX_OLD_SPACE_SIZE=4096
@@ -60,12 +60,12 @@ RUN turbo prune --scope=@calcom/web --docker
 
 
 RUN yarn config set httpTimeout 1200000 && \ 
-    yarn && 
- 
+    yarn 
+   
 
 RUN  turbo run build --filter=@calcom/web... 
 
-RUN yarn test
+RUN  yarn test
 
 RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
