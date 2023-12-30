@@ -27,9 +27,5 @@ spec:
           ports:
             - containerPort: 5432
               name: postgres    
-          volumeMounts:
-            - name: postgres-persistent-storage
-              mountPath: /var/lib/postgres    
-            - name: calcom-dbcreation-script
-              mountPath: /docker-entrypoint-initdb.d                                                  
+        
       
