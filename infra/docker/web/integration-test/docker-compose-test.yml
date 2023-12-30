@@ -1,5 +1,4 @@
-volumes:
-  database-data:
+
 
 networks:
   stack:
@@ -33,7 +32,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - database-data:/var/lib/postgresql/data/
+      - ./infra/docker/web/integration-test/healthchecks:/healthchecks
+
     healthcheck:
       test: integration-test/postgres-healthcheck
       interval: "5s"
