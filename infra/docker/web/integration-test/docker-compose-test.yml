@@ -32,10 +32,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - /infra/docker/web/integration-test/healthchecks:/healthchecks
+      - ./healthchecks:/healthchecks
 
     healthcheck:
-      test: integration-test/postgres-healthcheck
+      test:  /healthchecks/postgres-healthcheck
       interval: "5s"
     networks:
       - stack
