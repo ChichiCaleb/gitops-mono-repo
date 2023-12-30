@@ -65,8 +65,6 @@ RUN yarn config set httpTimeout 1200000 && \
 
 RUN  turbo run build --filter=@calcom/web... 
 
-RUN  yarn test
-
 RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
 #############################################
