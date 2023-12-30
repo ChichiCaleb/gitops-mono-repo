@@ -1,7 +1,3 @@
-# networks:
-#   stack:
-#     name: stack
-#     external: false
 
 services:
   calkube:
@@ -9,10 +5,7 @@ services:
    
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
-      # - NEXTAUTH_SECRET=EI4qqDpcfdvf4A+0aQEEx8JjHxHSy4uWiZw/F32K+pA=
-      # - CALENDSO_ENCRYPTION_KEY=0zfLtY99wjeLnsM7qsa8xsT+Q0oSgnOL
-    # networks:
-    #   - stack
+    
   
   postgres:
     image: postgres
@@ -24,8 +17,7 @@ services:
     healthcheck:
       test: integration-test/postgres-healthcheck
       interval: "5s"
-    # networks:
-    #   - stack
+  
   sut:
     image: "${TESTING_IMAGE}"
     depends_on:
