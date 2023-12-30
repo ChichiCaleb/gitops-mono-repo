@@ -156,7 +156,7 @@ jobs:
 # NEXT JOB #######################################################################   
   test-k3d:
     name: Test Deployment in Kubernetes
-    needs: [build-test-image]
+    # needs: [build-test-image]
     runs-on: ubuntu-latest
 
     permissions:
