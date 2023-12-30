@@ -79,7 +79,7 @@ COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/setupVitest.ts /app/setupVitest.ts 
 COPY --from=builder /app/vitest.config.ts /app/vitest.config.ts 
 COPY --from=builder /app/vitest.workspace.ts /app/vitest.workspace.ts 
-
+COPY --from=builder /app/tests /app/tests 
 
 RUN yarn test
 
