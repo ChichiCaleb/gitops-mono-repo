@@ -12,7 +12,7 @@ RUN TURBO_VERSION=$(cat package.json | jq '.dependencies["turbo"]' -r) npm i -g 
 
 
 #############################################
-FROM base as installer
+FROM base as builder
 
 
 # Optimize for YARN installation speed
@@ -62,36 +62,33 @@ RUN turbo prune --scope=@calcom/web --docker
 RUN yarn config set httpTimeout 1200000 && \ 
     yarn 
    
-#############################################
-FROM base as test 
-
-WORKDIR /app
-
-COPY --from=installer /app/. .
-
-RUN yarn test
-
-#############################################
-FROM base as builder
-
-COPY --from=installer /app/. .
 
 RUN  turbo run build --filter=@calcom/web... 
 
 RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
+#############################################
+FROM base as test
+
+COPY --from=builder /app/apps/web /app/apps/web 
+COPY --from=builder /app/packages /app/packages 
+COPY --from=builder /app/node_modules /app/node_modules 
+
+COPY --from=builder /app/setupVitest.ts /app/setupVitest.ts 
+COPY --from=builder /app/vitest.config.ts /app/vitest.config.ts 
+COPY --from=builder /app/vitest.workspace.ts /app/vitest.workspace.ts 
+COPY --from=builder /app/tests /app/tests 
+
+RUN yarn test
 
 #############################################
 FROM base as runner
 
 WORKDIR /app
 
-# Needed for prisma schema migration at runtime
+# dependency needed for prisma migration at runtime
 
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
-
-COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
-
 
 # chown to node default user/group
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
@@ -105,6 +102,9 @@ COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
 COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
+
+# prisma schema to be loaded at runtime
+COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
 
 EXPOSE 3000
 

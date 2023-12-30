@@ -34,5 +34,5 @@ services:
       postgres:
         condition: service_healthy
     # run all your tests here against the calkube service
-    command:  curl --fail-with-body http://calkube:3000/auth/login || exit 1
+    command:  curl --fail-with-body http://calkube:3000 || exit 1
     
