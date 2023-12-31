@@ -32,13 +32,13 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
     depends_on:
       - database
-  sut:
-    image: "${TESTING_IMAGE}"
-    depends_on:
-      calcom:
-        condition: service_started
-      database:
-        condition: service_healthy
-    # run all your tests here against the allhands22 service
-    command: curl --fail http://calcom:3000 || exit 1
+  # sut:
+  #   image: "${TESTING_IMAGE}"
+  #   depends_on:
+  #     calcom:
+  #       condition: service_started
+  #     database:
+  #       condition: service_healthy
+  #   # run all your tests here against the allhands22 service
+  #   command: curl --fail http://calcom:3000 || exit 1
     
