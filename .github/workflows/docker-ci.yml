@@ -166,7 +166,7 @@ jobs:
         run: |
         
       
-          docker run --rm --network stack \
+          docker run --rm --network stack image \
             -p 3000:3000 \
             -e DATABASE_URL=postgresql://${DATABASE_URL} \
           
@@ -197,7 +197,10 @@ jobs:
             kill $server_pid
             exit 1
        
-    
+        # run: |
+        #   export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
+        #   echo Testing image: "$TESTING_IMAGE"
+        #   docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up --exit-code-from sut
 
 
 
