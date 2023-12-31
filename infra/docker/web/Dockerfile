@@ -75,7 +75,7 @@ WORKDIR /app
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y openssl && \
+    apt-get install --no-install-recommends -y openssl curl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 
@@ -101,8 +101,6 @@ COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/pa
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=30s --retries=5 \
-    CMD wget --spider http://localhost:3000 || exit 1
 
 USER node
 

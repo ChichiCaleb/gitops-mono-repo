@@ -44,7 +44,7 @@ services:
       # postgres:
       #  condition: service_healthy
   
-    command:  wget --spider http://calkube:3000 || exit 1
+    command: curl --fail http://calkube:3000 || exit 1
   
      
           # echo "Waiting for the server to start..."
