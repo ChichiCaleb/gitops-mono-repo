@@ -112,17 +112,32 @@ jobs:
   #     - name: Unit Testing in Docker
   #       run: docker run --rm ghcr.io/${REPO}:"$GITHUB_RUN_ID" sh -c "yarn test"
 
-
 # # NEXT JOB #######################################################################   
-  test-integration:
-    name: Integration tests in Compose
-    # needs: [build-test-image]
+
+  integration-test:
     runs-on: ubuntu-latest
 
     permissions:
       packages: read
       contents: read
      
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: localUser
+          POSTGRES_PASSWORD: localPassword
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    
+   
 
     steps:
 
@@ -143,16 +158,78 @@ jobs:
           password:  ${{ secrets.GITHUB_TOKEN }}
 
       - name: Downcase repo name
-        
         run: |
               echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
       - name: Test healthcheck in Docker Compose
         # ghcr.io/${REPO}:"$GITHUB_RUN_ID"
         run: |
-          export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7364832710
-          echo Testing image: "$TESTING_IMAGE"
-          docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up --exit-code-from sut
+          # export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7364832710
+          # echo Testing image: "$TESTING_IMAGE"
+          docker run --env DATABASE_URL: postgresql://localUser:localPassword@localhost:5432/test --rm ghcr.io/chichicaleb/gitops-mono-repo:7364832710
+          
+          echo "Waiting for the server to start..."
+            sleep 120
+
+           for i in {1..60}; do
+              echo "Checking server health ($i/60)..."
+              response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
+              echo "HTTP Status Code: $response"
+              if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
+                echo "Server is healthy"
+                # Now, shutdown the server
+                kill $server_pid
+                exit 0
+              fi
+              sleep 1
+            done
+        
+            echo "Server health check failed"
+            kill $server_pid
+            exit 1
+
+
+
+# # NEXT JOB #######################################################################   
+  # test-integration:
+  #   name: Integration tests in Compose
+  #   # needs: [build-test-image]
+  #   runs-on: ubuntu-latest
+
+  #   permissions:
+  #     packages: read
+  #     contents: read
+     
+
+  #   steps:
+
+  #     - name: Checkout git repo
+  #       uses: actions/checkout@v4
+
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+  #     - name: Login to ghcr.io registry
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.repository_owner }}
+  #         password:  ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Downcase repo name
+        
+  #       run: |
+  #             echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
+  #     - name: Test healthcheck in Docker Compose
+  #       # ghcr.io/${REPO}:"$GITHUB_RUN_ID"
+  #       run: |
+  #         export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7364832710
+  #         echo Testing image: "$TESTING_IMAGE"
+  #         docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up --exit-code-from sut
 # NEXT JOB #######################################################################   
   # test-k3d:
   #   name: Test Deployment in Kubernetes
