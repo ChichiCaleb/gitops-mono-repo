@@ -162,13 +162,13 @@ jobs:
 
       - name: Test healthcheck in Docker Compose
         # ghcr.io/${REPO}:"$GITHUB_RUN_ID"
-       
+        
         run: |
         
       
-          docker run --rm --network stack ghcr.io/chichicaleb/gitops-mono-repo:7372470516  \
-            -p 3000:3000 \
-            -e DATABASE_URL=postgresql://${DATABASE_URL} \
+          docker run --rm --network stack ghcr.io/chichicaleb/gitops-mono-repo:7372470516 -e DATABASE_URL=${DATABASE_URL} &
+          
+           
           
             
               
@@ -196,6 +196,9 @@ jobs:
             echo "Server health check failed"
             kill $server_pid
             exit 1
+
+      
+        
        
         # run: |
         #   export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
