@@ -27,11 +27,7 @@ services:
     environment:
     
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
-    healthcheck:
-
-      interval: 30s
-      timeout: 30s
-      retries: 5
+    
     depends_on:
       - postgres
 
@@ -48,6 +44,11 @@ services:
         condition: service_started
       # postgres:
       #  condition: service_healthy
+    healthcheck:
+
+      interval: 30s
+      timeout: 30s
+      retries: 5
   
     command: curl --fail http://calkube:3000 || exit 1
   
