@@ -178,7 +178,7 @@ jobs:
               echo "HTTP Status Code: $response"
               if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
                 echo "Server is healthy"
-                # Now, shutdown the server
+                
                 kill $server_pid
                 exit 0
               fi
