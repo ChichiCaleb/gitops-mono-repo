@@ -28,11 +28,8 @@ services:
       - 3000:3000
 
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: calcom
-      DATABASE_HOST: database:5432
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
+     
+      DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
     depends_on:
       - database
   sut:
@@ -40,7 +37,7 @@ services:
     depends_on:
       calcom:
         condition: service_started
-      postgres:
+      database:
         condition: service_healthy
     # run all your tests here against the allhands22 service
     command: curl --fail http://calcom:3000 || exit 1
