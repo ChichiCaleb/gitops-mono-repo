@@ -151,8 +151,8 @@ jobs:
 
       - name: Copy env  
         run: |
-          grep -o '^[^#]*' .env > .env
-          cat .env >> $GITHUB_ENV
+          grep -o '^[^#]*' .env > .environment
+          cat .environment >> $GITHUB_ENV
           echo "DATABASE_HOST=localhost:5432" >> $GITHUB_ENV
           eval $(sed -e '/^#/d' -e 's/^/export /' -e 's/$/;/' .env) ;
 
