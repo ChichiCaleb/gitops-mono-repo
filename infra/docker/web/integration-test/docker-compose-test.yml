@@ -13,10 +13,28 @@ services:
     restart: always
     volumes:
       - database-data:/var/lib/postgresql/data/
-    environment: 
-       POSTGRES_USER: unicorn_user
-       POSTGRES_PASSWORD: magical_password
-    
+    environment:
+      -  POSTGRES_USER=postgres
+      -  POSTGRES_PASSWORD=postgres
     networks:
       - stack
+
+  calcom:
+    image: "${TESTING_IMAGE}"
+   
+    restart: always
+    networks:
+      - stack
+    ports:
+      - 3000:3000
+
+    environment:
+      -  POSTGRES_USER=postgres
+      -  POSTGRES_PASSWORD=postgres
+      -  POSTGRES_DB=calcom
+      -  DATABASE_HOST=database:5432
+      -  DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
+    depends_on:
+      - database
+
     

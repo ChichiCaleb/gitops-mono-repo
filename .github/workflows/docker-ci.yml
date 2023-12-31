@@ -149,41 +149,31 @@ jobs:
         run: |
               echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
-      # - name: Copy env  
-      #   run: |
-          
-          
-      #     echo  "DATABASE_URL=postgresql://unicorn_user:magical_password@database/calendso" >>${GITHUB_ENV}
           
 
-      - name: Start database
+      - name: Start service
         run: |
-          docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up -d database  
+          docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up -d database  \
+          
+        
+
+          
 
       - name: Test healthcheck in Docker Compose
         # ghcr.io/${REPO}:"$GITHUB_RUN_ID"
         
         run: |
-        
-      
-          docker run --rm --network stack ghcr.io/chichicaleb/gitops-mono-repo:7372470516 \
-           -e DATABASE_URL="DATABASE_URL=postgresql://unicorn_user:magical_password@database/calendso"  &
-          
-           
-          
-            
-              
-            server_pid=$!
-
+          export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
+          echo Testing image: "$TESTING_IMAGE"
+          docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up calcom
 
             echo "Waiting for the server to start..."
             sleep 120
 
-            echo ${{ env.NEXT_PUBLIC_WEBAPP_URL }}/auth/login
         
             for i in {1..60}; do
               echo "Checking server health ($i/60)..."
-              response=$(curl -o /dev/null -s -w "%{http_code}" ${{ env.NEXT_PUBLIC_WEBAPP_URL }}/auth/login)
+              response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
               echo "HTTP Status Code: $response"
               if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
                 echo "Server is healthy"
@@ -197,14 +187,6 @@ jobs:
             echo "Server health check failed"
             kill $server_pid
             exit 1
-
-      
-        
-       
-        # run: |
-        #   export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
-        #   echo Testing image: "$TESTING_IMAGE"
-        #   docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up --exit-code-from sut
 
 
 
