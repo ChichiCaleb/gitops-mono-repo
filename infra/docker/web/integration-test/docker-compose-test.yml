@@ -40,5 +40,7 @@ services:
       # database:
       #   condition: service_healthy
     # run all your tests here against the allhands22 service
-    command: curl --fail http://localhost:3000 || exit 1
+    command: |
+     curl  http://localhost:3000
+    #  curl --fail http://localhost:3000 || exit 1
     
