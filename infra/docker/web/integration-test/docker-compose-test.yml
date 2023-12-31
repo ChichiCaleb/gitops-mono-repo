@@ -25,8 +25,8 @@ services:
   calkube:
     image: "${TESTING_IMAGE}"
     restart: always
-    networks:
-      - stack
+    # networks:
+    #   - stack
     ports:
       - 3000:3000
    
