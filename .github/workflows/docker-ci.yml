@@ -149,11 +149,11 @@ jobs:
         run: |
               echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
-      - name: Copy env  
-        run: |
+      # - name: Copy env  
+      #   run: |
           
           
-          echo  "DATABASE_URL=postgresql://unicorn_user:magical_password@database:5432/calendso" >>${GITHUB_ENV}
+      #     echo  "DATABASE_URL=postgresql://unicorn_user:magical_password@database/calendso" >>${GITHUB_ENV}
           
 
       - name: Start database
@@ -166,7 +166,8 @@ jobs:
         run: |
         
       
-          docker run --rm --network stack ghcr.io/chichicaleb/gitops-mono-repo:7372470516 -e DATABASE_URL=${DATABASE_URL} &
+          docker run --rm --network stack ghcr.io/chichicaleb/gitops-mono-repo:7372470516 \
+           -e DATABASE_URL="DATABASE_URL=postgresql://unicorn_user:magical_password@database/calendso"  &
           
            
           
