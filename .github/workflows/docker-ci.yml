@@ -177,7 +177,7 @@ jobs:
            -p 3000:3000 \
            -e DATABASE_URL=postgresql://localUser:localPassword@localhost:5432/test  \
            ghcr.io/chichicaleb/gitops-mono-repo:7364832710
-
+ 
           
           echo "Waiting for the server to start..."
             sleep 120
