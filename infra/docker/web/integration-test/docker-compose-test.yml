@@ -32,7 +32,7 @@ services:
    
     environment:
     
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
+      - DATABASE_URL=postgresql://localUser:localPassword@localhost:5432/test
     # depends_on:
     #   - postgres
 
