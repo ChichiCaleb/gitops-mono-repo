@@ -1,5 +1,3 @@
-volumes:
-  database-data:
 
 networks:
   stack:
@@ -12,7 +10,8 @@ services:
     image: postgres
     restart: always
     volumes:
-      - database-data:/var/lib/postgresql/data/
+      - ./healthchecks:/healthchecks
+
     environment:
        POSTGRES_USER: postgres
        POSTGRES_PASSWORD: postgres
