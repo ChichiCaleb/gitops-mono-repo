@@ -27,6 +27,11 @@ services:
     environment:
     
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
+    healthcheck:
+
+      interval: 30s
+      timeout: 30s
+      retries: 5
     depends_on:
       - postgres
 
@@ -52,7 +57,7 @@ services:
 
           #  for i in {1..60}; do
           #     echo "Checking server health ($i/60)..."
-          #     response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
+          #     response=$(curl -o /dev/null -s -w "%{http_code}" calkube:3000)
           #     echo "HTTP Status Code: $response"
           #     if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
           #       echo "Server is healthy"
