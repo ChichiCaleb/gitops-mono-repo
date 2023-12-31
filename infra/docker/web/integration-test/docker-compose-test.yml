@@ -12,8 +12,8 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    # volumes:
-    #   - ./healthchecks:/healthchecks
+    volumes:
+      - ./healthchecks:/healthchecks
 
     healthcheck:
       # test:  infra/docker/web/integration-test/healthchecks/postgres-healthcheck
@@ -37,7 +37,7 @@ services:
    
     environment:
     
-      - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/calcom
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
     depends_on:
       - postgres
 
