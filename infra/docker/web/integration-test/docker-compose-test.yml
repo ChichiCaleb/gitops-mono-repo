@@ -1,14 +1,8 @@
 
-
-# networks:
-#   stack:
-#     name: stack
-#     external: false
-
 services:
   postgres:
     image: postgres
-    restart: always
+    # restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -16,22 +10,17 @@ services:
       - ./healthchecks:/healthchecks
 
     healthcheck:
-      # test:  infra/docker/web/integration-test/healthchecks/postgres-healthcheck
+
       interval: 10s
       timeout: 5s
       retries: 5
-      # test: ["CMD-SHELL", "pg_isready -p 5432"]
-
-       
-    # networks:
-    #   - stack
+  
     
 
   calkube:
     image: "${TESTING_IMAGE}"
     restart: always
-    # networks:
-    #   - stack
+  
     ports:
       - 3000:3000
    
@@ -52,10 +41,7 @@ services:
     depends_on:
       calkube:
         condition: service_started
-      # postgres:
-      #  condition: service_healthy
-    # networks:
-    #   - stack
+   
     command: |
   
      
