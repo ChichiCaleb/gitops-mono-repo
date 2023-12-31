@@ -166,11 +166,11 @@ jobs:
         run: |
         
       
-          docker run --rm --network stack image \
+          docker run --rm --network stack ghcr.io/chichicaleb/gitops-mono-repo:7372470516  \
             -p 3000:3000 \
             -e DATABASE_URL=postgresql://${DATABASE_URL} \
           
-            ghcr.io/chichicaleb/gitops-mono-repo:7372470516 &
+            
               
             server_pid=$!
 
