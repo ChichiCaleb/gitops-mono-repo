@@ -14,11 +14,9 @@ services:
     volumes:
       - database-data:/var/lib/postgresql/data/
     environment: 
-      - POSTGRES_USER=unicorn_user
-      - POSTGRES_PASSWORD=magical_password
-      - POSTGRES_DB=calendso
-      - DATABASE_HOST=database:5432
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
+       POSTGRES_USER: unicorn_user
+       POSTGRES_PASSWORD: magical_password
+    
     networks:
       - stack
     
