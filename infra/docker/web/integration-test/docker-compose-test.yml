@@ -49,11 +49,6 @@ services:
     command: |
     
      
-      # curl --fail http://localhost:3000 || exit 1
-  
-     
-          # echo "Waiting for the server to start..."
-          #   sleep 120
 
            for i in {1..60}; do
               echo "Checking server health ($i/60)..."
