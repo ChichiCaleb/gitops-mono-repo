@@ -148,7 +148,7 @@ jobs:
         
         run: |
               echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-              echo "DATABASE_HOST=database:5432" >>${GITHUB_ENV}
+            
 
           
 
@@ -163,31 +163,9 @@ jobs:
         run: |
           export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
           echo Testing image: "$TESTING_IMAGE"
-          docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up -d database  
-          ./infra/docker/web/integration-test/wait-for-it.sh ${DATABASE_HOST} -- echo "database is up"
-          docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up --exit-code-from calcom
+         
+          docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up --exit-code-from sut
 
-
-            echo "Waiting for the server to start..."
-            sleep 120
-
-        
-            for i in {1..60}; do
-              echo "Checking server health ($i/60)..."
-              response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
-              echo "HTTP Status Code: $response"
-              if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
-                echo "Server is healthy"
-                
-                kill $server_pid
-                exit 0
-              fi
-              sleep 1
-            done
-        
-            echo "Server health check failed"
-            kill $server_pid
-            exit 1
 
 
 

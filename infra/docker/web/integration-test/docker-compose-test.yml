@@ -35,5 +35,13 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}/${POSTGRES_DB}
     depends_on:
       - database
-
+  sut:
+    image: "${TESTING_IMAGE}"
+    depends_on:
+      calcom:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    # run all your tests here against the allhands22 service
+    command: curl --fail http://calcom:3000 || exit 1
     
