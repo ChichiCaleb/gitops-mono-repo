@@ -2,7 +2,7 @@
 services:
   postgres:
     image: postgres
-    # restart: always
+
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -41,27 +41,29 @@ services:
     depends_on:
       calkube:
         condition: service_started
-   
-    command: |
+      # postgres:
+      #  condition: service_healthy
+  
+    command:  curl --fail http://calkube:3000 || exit 1
   
      
-          echo "Waiting for the server to start..."
-            sleep 120
+          # echo "Waiting for the server to start..."
+          #   sleep 120
 
-           for i in {1..60}; do
-              echo "Checking server health ($i/60)..."
-              response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
-              echo "HTTP Status Code: $response"
-              if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
-                echo "Server is healthy"
-                # Now, shutdown the server
-                kill $server_pid
-                exit 0
-              fi
-              sleep 1
-            done
+          #  for i in {1..60}; do
+          #     echo "Checking server health ($i/60)..."
+          #     response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
+          #     echo "HTTP Status Code: $response"
+          #     if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
+          #       echo "Server is healthy"
+          #       # Now, shutdown the server
+          #       kill $server_pid
+          #       exit 0
+          #     fi
+          #     sleep 1
+          #   done
         
-            echo "Server health check failed"
-            kill $server_pid
-            exit 1
+          #   echo "Server health check failed"
+          #   kill $server_pid
+          #   exit 1
     
