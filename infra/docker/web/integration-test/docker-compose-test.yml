@@ -1,40 +1,45 @@
 
 
-# networks:
-#   stack:
-#     name: stack
-#     external: false
+networks:
+  stack:
+    name: stack
+    external: false
 
 services:
-  # postgres:
-  #   image: postgres
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #   volumes:
-  #     - ./healthchecks:/healthchecks
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./healthchecks:/healthchecks
 
-  #   healthcheck:
-  #     test:  infra/docker/web/integration-test/healthchecks/postgres-healthcheck
-  #     interval: "5s"
-  #   networks:
-  #     - stack
+    healthcheck:
+      # test:  infra/docker/web/integration-test/healthchecks/postgres-healthcheck
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      test:  /healthchecks/postgres-healthcheck
+
+       
+    networks:
+      - stack
     
 
   calkube:
     image: "${TESTING_IMAGE}"
     restart: always
-    # networks:
-    #   - stack
+    networks:
+      - stack
     ports:
       - 3000:3000
    
     environment:
     
-      - DATABASE_URL=postgresql://localUser:localPassword@localhost:5432/test
-    # depends_on:
-    #   - postgres
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/calcom
+    depends_on:
+      - postgres
 
     
   
@@ -47,11 +52,30 @@ services:
     depends_on:
       calkube:
         condition: service_healthy
-      # postgres:
-      #   condition: service_healthy
-   
+      postgres:
+       condition: service_healthy
+    networks:
+      - stack
     command: |
   
-     --interval=30s --timeout=30s --retries=5 \
-     wget --spider http://localhost:3000 || exit 1
+     
+          echo "Waiting for the server to start..."
+            sleep 120
+
+           for i in {1..60}; do
+              echo "Checking server health ($i/60)..."
+              response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
+              echo "HTTP Status Code: $response"
+              if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
+                echo "Server is healthy"
+                # Now, shutdown the server
+                kill $server_pid
+                exit 0
+              fi
+              sleep 1
+            done
+        
+            echo "Server health check failed"
+            kill $server_pid
+            exit 1
     
