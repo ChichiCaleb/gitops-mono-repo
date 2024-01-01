@@ -106,7 +106,7 @@ jobs:
           sleep 60s
 
           curl --fail  http://localhost:3000  \
-          echo "Server is healthy \
+          echo "Server is healthy" \
           || exit 1
           
           # response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000/auth/login)
