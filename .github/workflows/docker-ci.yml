@@ -169,7 +169,7 @@ jobs:
 
           echo "Waiting for the server to start..."
           sleep 60s
-          curl localhost:3000
+          curl localhost:3000/auth/login
           # response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
           # if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
           #       echo "Server is healthy"
