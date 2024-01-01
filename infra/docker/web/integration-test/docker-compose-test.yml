@@ -20,16 +20,18 @@ services:
     depends_on:
       - database
   
-  # sut:
-  #   image: "${TESTING_IMAGE}"
-  #   depends_on:
-  #     - database
-  #     - calcom
+  sut:
+    image: "${TESTING_IMAGE}"
+    depends_on:
+        calcom:
+         condition: service_healthy
 
-  #   command: | 
-  #     echo "Waiting for the server to start..."
-  #     sleep 60s
-  #     curl http://localhost:3000/auth/login || exit 1
+
+    command: | 
+      
+      echo "Waiting for the server to be healthy..."
+      sleep 60s
+      curl http://localhost:3000/auth/login || exit 1
       
       
       
