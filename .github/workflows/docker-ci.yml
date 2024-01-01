@@ -105,7 +105,7 @@ jobs:
           echo "Waiting for the server to be healthy..."
           sleep 60s
 
-          curl --fail-with-body http://localhost:3000/auth/login || exit 1
+          curl --fail-with-body http://localhost:3000 || exit 1
           
           # response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000/auth/login)
 
