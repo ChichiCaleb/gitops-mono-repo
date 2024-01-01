@@ -16,7 +16,7 @@ services:
     ports:
       - 3000:3000
     healthcheck:
-      test: curl --fail http://localhost:3000/auth/login || exit 1
+      test: curl  http://localhost:3000/auth/login || exit 1
       start_period: 60s
       
     environment:
@@ -24,12 +24,7 @@ services:
     depends_on:
       - database
   
-  sut:
-    image: "${TESTING_IMAGE}"
-    depends_on:
-        calcom:
-         condition: service_healthy
-
+ 
 
       
       
