@@ -16,14 +16,9 @@ services:
     ports:
       - 3000:3000
     healthcheck:
-      test: |
-       echo "Waiting for the server to be healthy..."
-       sleep 60s
-       curl --fail http://localhost:3000/auth/login || exit 1
-      interval: 30s
-      retries: 5
-      start_period: 30s
-      timeout: 10s 
+      test: curl --fail http://localhost:3000/auth/login || exit 1
+      start_period: 60s
+      
     environment:
       DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
     depends_on:
