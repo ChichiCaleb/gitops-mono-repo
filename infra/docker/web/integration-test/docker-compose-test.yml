@@ -12,9 +12,13 @@ services:
     volumes:
       - ./healthchecks:/healthchecks
 
-    # healthcheck:
-    #   test: /healthchecks/postgres-healthcheck
-    #   interval: "5s"
+    healthcheck:
+      test: /healthchecks/postgres-healthcheck
+      interval: 60s
+      retries: 5
+      start_period: 60s
+      timeout: 10s 
+
 
 
     environment:
