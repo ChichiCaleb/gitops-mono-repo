@@ -32,20 +32,27 @@ services:
     ports:
       - 3000:3000
 
+    healthcheck:
+      test: curl --fail http://calcom:3000 || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 60s
+      timeout: 10s 
+
     environment:
      
       DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
     depends_on:
-      - database
-  sut:
-    image: "${TESTING_IMAGE}"
-    depends_on:
-      calcom:
-        condition: service_healthy
       database:
         condition: service_healthy
-
-    command: |
+  
+  # sut:
+  #   image: "${TESTING_IMAGE}"
+  #   depends_on:
+  #     calcom:
+  #       condition: service_healthy
+      
+    # command: |
     
-     curl --fail http://calcom:3000 || exit 1
+    #  curl --fail http://calcom:3000  || exit 1
     
