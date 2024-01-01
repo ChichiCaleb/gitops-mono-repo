@@ -12,6 +12,11 @@ services:
     volumes:
       - ./healthchecks:/healthchecks
 
+    healthcheck:
+      test: /healthchecks/postgres-healthcheck
+      interval: "5s"
+
+
     environment:
        POSTGRES_USER: postgres
        POSTGRES_PASSWORD: postgres
@@ -36,11 +41,11 @@ services:
     image: "${TESTING_IMAGE}"
     depends_on:
       calcom:
-        condition: service_started
-      # database:
-      #   condition: service_healthy
-    # run all your tests here against the allhands22 service
+        condition: service_healthy
+      database:
+        condition: service_healthy
+
     command: |
-     curl  http://localhost:3000
-    #  curl --fail http://localhost:3000 || exit 1
+    
+     curl --fail http://calcom:3000 || exit 1
     
