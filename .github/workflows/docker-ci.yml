@@ -100,26 +100,14 @@ jobs:
           export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
           echo Testing image: "$TESTING_IMAGE"
           
-          docker compose -f ./infra/docker/web/integration-test/compose.yml up -d  calcom 
+          docker compose -f ./infra/docker/web/integration-test/compose.yml up -d calcom 
 
           echo "Waiting for the server to be healthy..."
           sleep 60s
 
-          curl --fail  http://localhost:3000  \
-          echo "Server is healthy" \
-          || exit 1
+          curl --fail http://localhost:3000 || exit 1
           
-          # response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000/auth/login)
-
-          # if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
-          # echo "Server is healthy"
-          # exit 0
-          # fi
-          
-          # sleep 1
-          # echo "Server health check failed"
-          # exit 1
-
+         
 
 
 
