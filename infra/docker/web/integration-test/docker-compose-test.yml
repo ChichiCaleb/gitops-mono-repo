@@ -1,4 +1,4 @@
-version: '2.2'
+version: '3.8'
 
 
 volumes:
@@ -19,7 +19,7 @@ services:
     ports:
       - 3000:3000
     healthcheck:
-      test: curl --fail http://localhost:3000/auth/login || exit 1
+      test: curl --fail  http://localhost:3000/auth/login || exit 1
       start_period: 60s
       
     environment:
