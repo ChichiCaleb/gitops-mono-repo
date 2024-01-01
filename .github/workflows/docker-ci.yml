@@ -65,24 +65,75 @@ jobs:
          
 
 # # NEXT JOB #######################################################################   
-  test-integration:
-    name: Integration test in Compose
-    # needs: [build-test-image]
+  # test-integration:
+  #   name: Integration test in Compose
+  #   # needs: [build-test-image]
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     packages: read
+  #     contents: read
+  #   steps:
+
+  #     - name: Checkout git repo
+  #       uses: actions/checkout@v4
+
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+  #     - name: Login to ghcr.io registry
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.repository_owner }}
+  #         password:  ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Downcase repo name
+  #       run: |
+  #             echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+            
+  #     - name: Test healthcheck in Docker Compose
+  #       # ghcr.io/${REPO}:"$GITHUB_RUN_ID"
+  #       run: |
+  #         export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
+  #         echo Testing image: "$TESTING_IMAGE"
+          
+  #         docker compose -f ./infra/docker/web/integration-test/compose.yml up -d calcom 
+
+  #         echo "Waiting for the server to be healthy..."
+  #         sleep 60s
+
+  #         curl --fail http://localhost:3000 || exit 1
+          
+         
+
+
+
+# # NEXT JOB #######################################################################   
+  scan-image:
+    name: Scan Image with Trivy
+    needs: [build-test-image]
     runs-on: ubuntu-latest
+
     permissions:
-      packages: read
-      contents: read
+      contents: read # for actions/checkout to fetch code
+      packages: read # needed to pull docker image to ghcr.io
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+ 
+
     steps:
 
       - name: Checkout git repo
         uses: actions/checkout@v4
-
+      
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
+          
       - name: Login to ghcr.io registry
         uses: docker/login-action@v3
         with:
@@ -90,77 +141,24 @@ jobs:
           username: ${{ github.repository_owner }}
           password:  ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Downcase repo name
-        run: |
-              echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-            
-      - name: Test healthcheck in Docker Compose
-        # ghcr.io/${REPO}:"$GITHUB_RUN_ID"
-        run: |
-          export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
-          echo Testing image: "$TESTING_IMAGE"
-          
-          docker compose -f ./infra/docker/web/integration-test/compose.yml up -d calcom 
+       
 
-          echo "Waiting for the server to be healthy..."
-          sleep 60s
-
-          curl --fail http://localhost:3000 || exit 1
-          
-         
-
-
-
-# # NEXT JOB #######################################################################   
-#   scan-image:
-#     name: Scan Image with Trivy
-#     needs: [build-test-image]
-#     runs-on: ubuntu-latest
-
-#     # permissions:
-#     #   contents: read # for actions/checkout to fetch code
-#     #   packages: read # needed to pull docker image to ghcr.io
-#     #   security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-#     permissions:
-#      actions: read
-#      contents: read
-#      security-events: write
- 
-
-#     steps:
-
-#       - name: Checkout git repo
-#         uses: actions/checkout@v4
-      
-#       - name: Login to Docker Hub
-#         uses: docker/login-action@v3
-#         with:
-#           username: ${{ secrets.DOCKERHUB_USERNAME }}
-#           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
-#       - name: Login to ghcr.io registry
-#         uses: docker/login-action@v3
-#         with:
-#           registry: ghcr.io
-#           username: ${{ github.actor }}
-#           password: ${{ secrets.GITHUB_TOKEN }}
-
-#       - name: Pull image to scan
-#         run: docker pull ghcr.io/chichicaleb/calkube:"$GITHUB_RUN_ID"
+      # - name: Pull image to scan
+      #   run: docker pull ghcr.io/${REPO}:"$GITHUB_RUN_ID"
         
-#       - name: Run Trivy for all CVEs (non-blocking)
-#         uses: aquasecurity/trivy-action@master
-#         with:
-#           image-ref: ghcr.io/chichicaleb/calkube:${{ github.run_id }}
-#           format: table
-#           exit-code: 0
+      - name: Run Trivy for all CVEs (non-blocking)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/chichicaleb/gitops-mono-repo:7372470516
+          format: table
+          exit-code: 0
 
       
-#       - name: Upload Trivy scan results to GitHub Security tab
-#         uses: github/codeql-action/upload-sarif@v2
-#         if: always()
-#         with:
-#           sarif_file: 'trivy-results.sarif'
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
 
 # NEXT JOB #######################################################################   
   # build-final-image:
