@@ -61,7 +61,7 @@ services:
     command: | 
       echo "Waiting for the server to start..."
       sleep 60s
-      curl http://localhost:3000 || exit 1
+      curl http://localhost:3000/auth/login || exit 1
       
       
       
