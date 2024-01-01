@@ -47,14 +47,13 @@ services:
      
       DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
     depends_on:
-      database:
-        condition: service_healthy
+      - database
   
-  # sut:
-  #   image: "${TESTING_IMAGE}"
-  #   depends_on:
-  #     calcom:
-  #       condition: service_healthy
+  sut:
+    image: "${TESTING_IMAGE}"
+    depends_on:
+      calcom:
+        condition: service_healthy
       
     # command: |
     
