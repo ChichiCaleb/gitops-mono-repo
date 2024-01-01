@@ -52,5 +52,24 @@ services:
     depends_on:
       - database
   
+  sut:
+    image: "${TESTING_IMAGE}"
+    depends_on:
+      - database
+      - calcom
 
+    command: | 
+      echo "Waiting for the server to start..."
+          sleep 60s
+          response=$(curl -o /dev/null -s -w "%{http_code}" localhost:3000)
+          if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
+                echo "Server is healthy"
+               
+                exit 0
+              fi
+              sleep 1
+
+            echo "Server health check failed"
+           
+            exit 1
     
