@@ -1,3 +1,8 @@
+version: '3.8'
+
+volumes:
+
+  database-data:
 
 networks:
   stack:
@@ -10,11 +15,11 @@ services:
     image: postgres
     restart: always
     volumes:
-      - ./healthchecks:/healthchecks
+      - database-data:/var/lib/postgresql/data/
 
-    healthcheck:
-      test: /healthchecks/postgres-healthcheck
-      interval: 5s
+    # healthcheck:
+    #   test: /healthchecks/postgres-healthcheck
+    #   interval: 5s
       
 
 
@@ -36,17 +41,16 @@ services:
 
     healthcheck:
       test: curl --fail http://localhost:3000 || exit 1
-      interval: 60s
+      interval: 30s
       retries: 5
-      start_period: 60s
+      start_period: 30s
       timeout: 10s 
 
     environment:
      
       DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
     depends_on:
-      database:
-        condition: service_healthy
+      - database
   
 
     
