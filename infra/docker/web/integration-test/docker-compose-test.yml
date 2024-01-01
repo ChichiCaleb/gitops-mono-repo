@@ -1,53 +1,27 @@
-# version: '3.8'
-
 volumes:
-
-  database-data:
-
-# networks:
-#   stack:
-#     name: stack
-#     external: false
+ database-data:
 
 services:
   database:
-    container_name: database
     image: postgres
-    # restart: always
     volumes:
       - database-data:/var/lib/postgresql/data/
-
-    # healthcheck:
-    #   test: /healthchecks/postgres-healthcheck
-    #   interval: 5s
-      
-
-
-
     environment:
        POSTGRES_USER: postgres
        POSTGRES_PASSWORD: postgres
-    # networks:
-    #   - stack
+  
 
   calcom:
     image: "${TESTING_IMAGE}"
-   
-    # restart: always
-    # networks:
-    #   - stack
     ports:
       - 3000:3000
-
     healthcheck:
       test: curl --fail http://localhost:3000 || exit 1
       interval: 30s
       retries: 5
       start_period: 30s
       timeout: 10s 
-
     environment:
-     
       DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
     depends_on:
       - database
