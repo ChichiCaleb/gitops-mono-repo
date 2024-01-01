@@ -16,7 +16,10 @@ services:
     ports:
       - 3000:3000
     healthcheck:
-      test: curl --fail http://localhost:3000 || exit 1
+      test: |
+       echo "Waiting for the server to be healthy..."
+       sleep 60s
+       curl --fail http://localhost:3000/auth/login || exit 1
       interval: 30s
       retries: 5
       start_period: 30s
@@ -33,11 +36,6 @@ services:
          condition: service_healthy
 
 
-    command: | 
-      
-      echo "Waiting for the server to be healthy..."
-      sleep 60s
-      curl http://localhost:3000/auth/login || exit 1
       
       
       
