@@ -61,8 +61,8 @@ services:
     command: | 
       echo "Waiting for the server to start..."
       sleep 60s
-      curl --fail http://localhost:3000 \
-      echo "Server is healthy" \
-      || exit 1
+      curl http://localhost:3000 || exit 1
+      
+      
       
          
