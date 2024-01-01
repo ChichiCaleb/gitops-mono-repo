@@ -166,8 +166,20 @@ jobs:
      
           
           docker compose -f ./infra/docker/web/integration-test/docker-compose-test.yml up -d calcom 
+          echo "Waiting for the server to start..."
           sleep 60s
-          curl --fail http://localhost:3000 || exit 1
+          response=curl --fail http://localhost:3000 
+          if [[ "$response" == "200" ]] || [[ "$response" == "307" ]]; then
+                echo "Server is healthy"
+                # Now, shutdown the server
+                kill $server_pid
+                exit 0
+              fi
+              sleep 1
+
+            echo "Server health check failed"
+            kill $server_pid
+            exit 1
 
 
 
