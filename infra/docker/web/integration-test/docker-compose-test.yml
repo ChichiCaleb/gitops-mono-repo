@@ -1,19 +1,19 @@
-version: '3.8'
+# version: '3.8'
 
 volumes:
 
   database-data:
 
-networks:
-  stack:
-    name: stack
-    external: false
+# networks:
+#   stack:
+#     name: stack
+#     external: false
 
 services:
   database:
     container_name: database
     image: postgres
-    restart: always
+    # restart: always
     volumes:
       - database-data:/var/lib/postgresql/data/
 
@@ -27,15 +27,15 @@ services:
     environment:
        POSTGRES_USER: postgres
        POSTGRES_PASSWORD: postgres
-    networks:
-      - stack
+    # networks:
+    #   - stack
 
   calcom:
     image: "${TESTING_IMAGE}"
    
-    restart: always
-    networks:
-      - stack
+    # restart: always
+    # networks:
+    #   - stack
     ports:
       - 3000:3000
 
@@ -52,16 +52,16 @@ services:
     depends_on:
       - database
   
-  sut:
-    image: "${TESTING_IMAGE}"
-    depends_on:
-      - database
-      - calcom
+  # sut:
+  #   image: "${TESTING_IMAGE}"
+  #   depends_on:
+  #     - database
+  #     - calcom
 
-    command: | 
-      echo "Waiting for the server to start..."
-      sleep 60s
-      curl http://localhost:3000/auth/login || exit 1
+  #   command: | 
+  #     echo "Waiting for the server to start..."
+  #     sleep 60s
+  #     curl http://localhost:3000/auth/login || exit 1
       
       
       
