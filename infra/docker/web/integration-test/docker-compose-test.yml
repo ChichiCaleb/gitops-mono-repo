@@ -12,9 +12,9 @@ services:
     volumes:
       - ./healthchecks:/healthchecks
 
-    healthcheck:
-      test: /healthchecks/postgres-healthcheck
-      interval: "5s"
+    # healthcheck:
+    #   test: /healthchecks/postgres-healthcheck
+    #   interval: "5s"
 
 
     environment:
