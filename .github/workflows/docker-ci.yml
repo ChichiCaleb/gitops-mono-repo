@@ -129,7 +129,7 @@ jobs:
         run: |
               echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
               export TESTING_IMAGE=ghcr.io/${REPO}:"$GITHUB_RUN_ID"
-              echo Testing image: "$TESTING_IMAGE"
+              echo Testing image: ghcr.io/${GITHUB_REPOSITORY,,}:"$GITHUB_RUN_ID"
 
       - name: Checkout git repo
         uses: actions/checkout@v4
