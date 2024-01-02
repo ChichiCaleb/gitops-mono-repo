@@ -144,8 +144,8 @@ jobs:
       - name: Downcase repo name
         run: |
               # echo "REPO=${{ github.repository}}" >>${GITHUB_ENV}
-              echo ${{ github.repository}}
-              echo ${{repository}}
+              echo ${{ github.repository},,}
+           
     
     
         
@@ -153,7 +153,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         
         with:
-          image-ref: 'ghcr.io/${REPO}:${{ github.run_id }}'
+          image-ref: 'ghcr.io/${{ github.repository}}:${{ github.run_id }}'
           exit-code: 0
           ignore-unfixed: true
           vuln-type: 'os,library'
