@@ -141,12 +141,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password:  ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Downcase repo name
-        run: |
-              echo "REPO=${{github.repository,,}}" >>${GITHUB_ENV}
-              echo  ${REPO}
+      # - name: Downcase repo name
+      #   run: |
+      #         echo "REPO=${github.repository,,}" >>${GITHUB_ENV}
+      #         echo  ${REPO}
     
-    
+      - name: Dump github context
+        run:   echo "$GITHUB_CONTEXT"
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
         
       - name:  Run Trivy for HIGH,CRITICAL CVEs and report (non-blocking)
         uses: aquasecurity/trivy-action@master
