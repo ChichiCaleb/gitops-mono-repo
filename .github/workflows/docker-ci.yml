@@ -152,7 +152,7 @@ jobs:
       - name:  Run Trivy for HIGH,CRITICAL CVEs and report (non-blocking)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/chichicaleb/gitops-mono-repo:7385156600
+          image-ref: ghcr.io/${REPO}:"$GITHUB_RUN_ID"
           exit-code: 0
           ignore-unfixed: true
           vuln-type: 'os,library'
@@ -233,7 +233,7 @@ jobs:
          
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           
         
 
