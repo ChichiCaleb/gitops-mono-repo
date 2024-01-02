@@ -11,7 +11,7 @@ import { IS_PRODUCTION } from "@calcom/lib/constants";
 import { prepareRootMetadata } from "@lib/metadata";
 
 
-import { PublicEnvScript } from 'next-runtime-env';
+
 
 
 
@@ -93,7 +93,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }
         `}</style>
        
-       <PublicEnvScript nonce={{ headerKey: 'x-nonce' }} />
+      
       </head>
       <body
         className="dark:bg-darkgray-50 desktop-transparent bg-subtle antialiased"
