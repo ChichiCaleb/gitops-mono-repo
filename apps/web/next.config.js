@@ -12,12 +12,12 @@ const {
   orgUserTypeRoutePath,
   orgUserTypeEmbedRoutePath,
 } = require("./pagesAndRewritePaths");
-const { makeEnvPublic } = require('next-runtime-env');
+
 
 const path = require ('node:path') ;
 const url = require  ('node:url');
 
-makeEnvPublic('NEXT_PUBLIC_WEBAPP_URL');
+
 
 const workspaceRoot = path.resolve(
   path.dirname(url.fileURLToPath(require('url').pathToFileURL(__filename).toString())),
@@ -180,7 +180,7 @@ const nextConfig = {
       externalDir: true,
 
       serverComponentsExternalPackages: ["next-i18next"],
-      
+      instrumentationHook: true,
     },
   
   i18n: {
