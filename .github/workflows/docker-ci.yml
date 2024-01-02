@@ -125,11 +125,11 @@ jobs:
 
     steps:
 
-      - name: Downcase repo name
-        run: |
-              echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-              export TESTING_IMAGE=ghcr.io/${REPO}:"$GITHUB_RUN_ID"
-              echo Testing image: ghcr.io/${GITHUB_REPOSITORY,,}:"$GITHUB_RUN_ID"
+      # - name: Downcase repo name
+      #   run: |
+      #         echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+      #         export TESTING_IMAGE=ghcr.io/${REPO}:"$GITHUB_RUN_ID"
+      #         echo Testing image: ghcr.io/${GITHUB_REPOSITORY,,}:"$GITHUB_RUN_ID"
 
       - name: Checkout git repo
         uses: actions/checkout@v4
@@ -147,10 +147,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password:  ${{ secrets.GITHUB_TOKEN }}
 
-     
-     
-    
-        
+      - name: Downcase repo name
+        run: |
+              echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+              export TESTING_IMAGE=ghcr.io/${REPO}:"$GITHUB_RUN_ID"
+              echo Testing image: ghcr.io/${GITHUB_REPOSITORY,,}:"$GITHUB_RUN_ID"
+
       - name:  Run Trivy for HIGH,CRITICAL CVEs and report (non-blocking)
         uses: aquasecurity/trivy-action@master
         
