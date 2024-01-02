@@ -125,6 +125,12 @@ jobs:
 
     steps:
 
+      - name: Downcase repo name
+        run: |
+              echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+              export TESTING_IMAGE=ghcr.io/${REPO}:"$GITHUB_RUN_ID"
+              echo Testing image: "$TESTING_IMAGE"
+
       - name: Checkout git repo
         uses: actions/checkout@v4
       
@@ -141,18 +147,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password:  ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Downcase repo name
-      #   run: |
-      #         # echo "REPO=${{ github.repository}}" >>${GITHUB_ENV}
-      #         echo ${{ github.repository}}
-           
-       
-      - name: Downcase repo name
-        uses: ASzc/change-string-case-action@v1
-        with:
-          string: ${{ github.repository }}
-      - run: |
-          echo "${{ steps.string.outputs.lowercase }}"
+     
+     
     
         
       - name:  Run Trivy for HIGH,CRITICAL CVEs and report (non-blocking)
