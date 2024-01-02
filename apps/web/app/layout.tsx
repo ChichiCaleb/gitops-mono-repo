@@ -9,8 +9,7 @@ import { getLocale } from "@calcom/features/auth/lib/getLocale";
 import { IS_PRODUCTION } from "@calcom/lib/constants";
 
 import { prepareRootMetadata } from "@lib/metadata";
-import { unstable_noStore as noStore } from 'next/cache';
-import { EnvScript } from 'next-runtime-env';
+
 
 
 
@@ -56,7 +55,7 @@ const getFallbackProps = () => ({
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 
-  noStore(); // Opt into dynamic rendering
+
   const h = headers();
 
   const fullUrl = h.get("x-url") ?? "";
@@ -75,12 +74,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       style={embedColorScheme ? { colorScheme: embedColorScheme as string } : undefined}
       data-nextjs-router="app">
       <head nonce={nonce}>
-      <EnvScript
-          env={{
-            NEXT_PUBLIC_WEBAPP_URL: process.env.NEXT_PUBLIC_WEBAPP_URL }}
-        />
-
-        {!IS_PRODUCTION && process.env.VERCEL_ENV === "preview" && (
+     {!IS_PRODUCTION && process.env.VERCEL_ENV === "preview" && (
           // eslint-disable-next-line @next/next/no-sync-scripts
           <Script
             data-project-id="KjpMrKTnXquJVKfeqmjdTffVPf1a6Unw2LZ58iE4"
