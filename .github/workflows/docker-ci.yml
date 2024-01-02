@@ -144,7 +144,7 @@ jobs:
       - name: Downcase repo name
         run: |
               # echo "REPO=${{ github.repository}}" >>${GITHUB_ENV}
-              echo ${{ github.repository}},,
+              echo ${{ github.repository,,}}
            
     
     
