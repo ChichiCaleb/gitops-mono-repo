@@ -146,8 +146,8 @@ jobs:
               echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
 
-      # - name: Pull image to scan
-      #   run: docker pull ghcr.io/${REPO}:"$GITHUB_RUN_ID"
+      - name: Pull image to scan
+        run: docker pull ghcr.io/${REPO}:${{ github.run_id }}
         
       - name:  Run Trivy for HIGH,CRITICAL CVEs and report (non-blocking)
         uses: aquasecurity/trivy-action@master
