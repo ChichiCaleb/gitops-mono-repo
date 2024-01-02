@@ -146,21 +146,24 @@ jobs:
       # - name: Pull image to scan
       #   run: docker pull ghcr.io/${REPO}:"$GITHUB_RUN_ID"
         
-      - name: Run Trivy for all CVEs (non-blocking)
+      - name: Run Trivy for HIGH,CRITICAL CVEs and report(non-blocking)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ghcr.io/chichicaleb/gitops-mono-repo:7372470516
-          format: table
           exit-code: 0
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'HIGH,CRITICAL'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
-      - run: | 
-         cat results.sarif
+     
       
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
-          sarif_file: results.sarif
+          sarif_file: 'trivy-results.sarif'
 
 # NEXT JOB #######################################################################   
   # build-final-image:
