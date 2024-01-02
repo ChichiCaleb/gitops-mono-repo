@@ -141,6 +141,10 @@ jobs:
           username: ${{ github.repository_owner }}
           password:  ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Downcase repo name
+        run: |
+              echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+
       - name: Pull image to scan
         run: docker pull ghcr.io/${REPO}:"$GITHUB_RUN_ID"
         
