@@ -10,6 +10,10 @@ import { IS_PRODUCTION } from "@calcom/lib/constants";
 
 import { prepareRootMetadata } from "@lib/metadata";
 
+import { unstable_noStore as noStore } from 'next/cache';
+import { EnvScript } from 'next-runtime-env';
+
+
 import "../styles/globals.css";
 
 const interFont = Inter({ subsets: ["latin"], variable: "--font-inter", preload: true, display: "swap" });
@@ -51,6 +55,9 @@ const getFallbackProps = () => ({
 });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+ 
+  noStore(); // Opt into dynamic rendering
+  
   const h = headers();
 
   const fullUrl = h.get("x-url") ?? "";
@@ -61,6 +68,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { locale, direction, isEmbed, embedColorScheme } = isSSG
     ? getFallbackProps()
     : await getInitialProps(fullUrl);
+
+    
 
   return (
     <html
@@ -82,6 +91,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             --font-cal: ${calFont.style.fontFamily.replace(/\'/g, "")};
           }
         `}</style>
+         <EnvScript
+          env={{ NEXT_PUBLIC_WEBAPP_URL: process.env.NEXT_PUBLIC_WEBAPP_URL}}
+          />
+
       </head>
       <body
         className="dark:bg-darkgray-50 desktop-transparent bg-subtle antialiased"
