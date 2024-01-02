@@ -10,8 +10,9 @@ import { IS_PRODUCTION } from "@calcom/lib/constants";
 
 import { prepareRootMetadata } from "@lib/metadata";
 
-import { unstable_noStore as noStore } from 'next/cache';
-import { EnvScript } from 'next-runtime-env';
+
+import { PublicEnvScript } from 'next-runtime-env';
+
 
 
 import "../styles/globals.css";
@@ -56,7 +57,7 @@ const getFallbackProps = () => ({
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
  
-  noStore(); // Opt into dynamic rendering
+
   
   const h = headers();
 
@@ -91,10 +92,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             --font-cal: ${calFont.style.fontFamily.replace(/\'/g, "")};
           }
         `}</style>
-         <EnvScript
-          env={{ NEXT_PUBLIC_WEBAPP_URL: process.env.NEXT_PUBLIC_WEBAPP_URL}}
-          />
-
+       
+       <PublicEnvScript nonce={{ headerKey: 'x-nonce' }} />
       </head>
       <body
         className="dark:bg-darkgray-50 desktop-transparent bg-subtle antialiased"
