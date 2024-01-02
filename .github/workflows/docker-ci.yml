@@ -10,102 +10,101 @@ on:
 
 jobs:
 # # FIRST JOB #######################################################################   
-  # build-test-image:
-  #   name: Build Image for Testing
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #    contents: read
-  #    packages: write 
-  #   steps:
+  build-test-image:
+    name: Build Image for Testing
+    runs-on: ubuntu-latest
+    permissions:
+     contents: read
+     packages: write 
+    steps:
       
-  #     - name: checkout
-  #       uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v4
 
-  #     - name: Extract metadata for the Docker image
-  #       id: docker_meta  
-  #       uses: docker/metadata-action@v5
-  #       with:
-  #        images: ghcr.io/${{ github.repository }}
-  #        tags: |
-  #           ${{ github.run_id }}
+      - name: Extract metadata for the Docker image
+        id: docker_meta  
+        uses: docker/metadata-action@v5
+        with:
+         images: ghcr.io/${{ github.repository }}
+         tags: |
+            ${GITHUB_REF#refs/tags/}
    
-  #     - name: create custom network
-  #       run : |
-  #         docker network create stack
+      - name: create custom network
+        run : |
+          docker network create stack
 
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-  #       with:
-  #         driver-opts: |
-  #           network=stack
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            network=stack
 
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  #     - name: Login to ghcr.io registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.repository_owner }}
-  #         password:  ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to ghcr.io registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password:  ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Build and Push to GHCR
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: ./
-  #         file: infra/docker/web/Dockerfile
-  #         push: true
-  #         tags: ${{ steps.docker_meta.outputs.tags }}
-  #         cache-from: type=gha
-  #         cache-to: type=gha,mode=max
-  #         platforms: linux/amd64
+      - name: Build and Push to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: ./
+          file: infra/docker/web/Dockerfile
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
          
 
 # # NEXT JOB #######################################################################   
-  # test-integration:
-  #   name: Integration test in Compose
-  #   # needs: [build-test-image]
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     packages: read
-  #     contents: read
-  #   steps:
+  test-integration:
+    name: Integration test in Compose
+    needs: [build-test-image]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: read
+    steps:
 
-  #     - name: Checkout git repo
-  #       uses: actions/checkout@v4
+      - name: Checkout git repo
+        uses: actions/checkout@v4
 
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-  #     - name: Login to ghcr.io registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.repository_owner }}
-  #         password:  ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to ghcr.io registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password:  ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Downcase repo name
-  #       run: |
-  #             echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+      - name: Downcase repo name
+        run: |
+              echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
             
-  #     - name: Test healthcheck in Docker Compose
-  #       # ghcr.io/${REPO}:"$GITHUB_RUN_ID"
-  #       run: |
-  #         export TESTING_IMAGE=ghcr.io/chichicaleb/gitops-mono-repo:7372470516
-  #         echo Testing image: "$TESTING_IMAGE"
+      - name: Test healthcheck in Docker Compose
+        run: |
+          export TESTING_IMAGE=ghcr.io/${REPO}:${GITHUB_REF#refs/tags/}
+          echo Testing image: "$TESTING_IMAGE"
           
-  #         docker compose -f ./infra/docker/web/integration-test/compose.yml up -d calcom 
+          docker compose -f ./infra/docker/web/integration-test/compose.yml up -d calcom 
 
-  #         echo "Waiting for the server to be healthy..."
-  #         sleep 60s
+          echo "Waiting for the server to be healthy..."
+          sleep 60s
 
-  #         curl --fail http://localhost:3000 || exit 1
+          curl --fail http://localhost:3000 || exit 1
           
          
 
@@ -114,13 +113,13 @@ jobs:
 # # NEXT JOB #######################################################################   
   scan-image:
     name: Scan Image with Trivy
-    # needs: [build-test-image]
+    needs: [build-test-image]
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read # for actions/checkout to fetch code
-      packages: read # needed to pull docker image to ghcr.io
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      contents: read 
+      packages: read 
+      security-events: write 
  
 
     steps:
@@ -143,13 +142,13 @@ jobs:
 
        
 
-      # - name: Pull image to scan
-      #   run: docker pull ghcr.io/${REPO}:"$GITHUB_RUN_ID"
+      - name: Pull image to scan
+        run: docker pull ghcr.io/${REPO}:${GITHUB_REF#refs/tags/}
         
       - name: Run Trivy for HIGH,CRITICAL CVEs and report(non-blocking)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/chichicaleb/gitops-mono-repo:7372470516
+          image-ref: ghcr.io/${REPO}:${GITHUB_REF#refs/tags/}
           exit-code: 0
           ignore-unfixed: true
           vuln-type: 'os,library'
@@ -166,81 +165,71 @@ jobs:
           sarif_file: 'trivy-results.sarif'
 
 # NEXT JOB #######################################################################   
-  # build-final-image:
-  #   name: Build Final Image
-  #   # needs: [test-unit, scan-image]
-  #   runs-on: ubuntu-latest
+  build-final-image:
+    name: Build Final Image
+    needs: [test-integration, scan-image]
+    runs-on: ubuntu-latest
 
-  #   permissions:
-  #     contents: read
-  #     packages: write # needed to push docker image to ghcr.io
-  #     pull-requests: write # needed to create and update comments in PRs
+    permissions:
+      contents: read
+      packages: write 
+      pull-requests: write # needed to create and update comments in PRs
 
-  #   steps:
+    steps:
      
-    
-  #     - name: checkout
-  #       uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v3
 
-  #     - name: Set up QEMU
-  #       uses: docker/setup-qemu-action@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-  #     - name: create custom network
-  #       run : |
-  #         docker network create stack 
+      - name: create custom network
+        run : |
+          docker network create stack 
    
 
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-  #       with:
-  #         driver-opts: |
-  #           network=stack
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            network=stack
         
     
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    
-        
-
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-  #     - name: Login to ghcr.io registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
-
-  #     - name: Docker Metadata for Final Image Build
-  #       id: docker_meta
-  #       uses: docker/metadata-action@v5
-  #       with:
-  #         images: horizonclient/calkube
-  #         flavor: |
-  #           latest=false
-  #         tags: |
-  #           type=raw,value=99
-  #           type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
-  #           type=ref,event=pr
-  #           type=ref,event=branch
-  #           type=semver,pattern={{version}}
+      - name: Login to ghcr.io registry
+        uses: docker/login-action@v3
+        with:
+                registry: ghcr.io
+                username: ${{ github.repository_owner }}
+                password:  ${{ secrets.GITHUB_TOKEN }}
 
 
-  #     - name: Docker Build and Push to GHCR and Docker Hub
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: ./
-  #         file: infra/docker/web/Dockerfile
-  #         push: true
-  #         tags: ${{ steps.docker_meta.outputs.tags }}
-  #         labels: ${{ steps.docker_meta.outputs.labels }}
-         
-  #         cache-from: type=gha
-  #         cache-to: type=gha,mode=max
-  #         platforms: linux/amd64,linux/arm64
+      - name: Docker Metadata for Final Image Build
+        id: docker_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: horizonclient/calkube
+          # flavor: |
+          #   latest=false
+          tags: |
+            ${GITHUB_REF#refs/tags/}
+
+      - name: Docker Build and Push to GHCR and Docker Hub
+        uses: docker/build-push-action@v5
+        with:
+          context: ./
+          file: infra/docker/web/Dockerfile
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
           
         
 
