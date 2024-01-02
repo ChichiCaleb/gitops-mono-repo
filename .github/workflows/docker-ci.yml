@@ -99,8 +99,6 @@ jobs:
         run: |
           export TESTING_IMAGE=ghcr.io/${REPO}:"$GITHUB_RUN_ID"
           echo Testing image: "$TESTING_IMAGE"
-          echo "IMAGE=${TESTING_IMAGE}" >>${GITHUB_ENV}
-          
           
           docker compose -f ./infra/docker/web/integration-test/compose.yml up -d calcom 
 
@@ -143,15 +141,14 @@ jobs:
           username: ${{ github.repository_owner }}
           password:  ${{ secrets.GITHUB_TOKEN }}
 
-     
 
       - name: Pull image to scan
-        run: ${IMAGE}
+        run: echo ghcr.io/${REPO}:"$GITHUB_RUN_ID"
         
       - name:  Run Trivy for HIGH,CRITICAL CVEs and report (non-blocking)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${IMAGE}
+          image-ref: ghcr.io/chichicaleb/gitops-mono-repo:7385156600
           exit-code: 0
           ignore-unfixed: true
           vuln-type: 'os,library'
