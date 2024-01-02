@@ -178,6 +178,7 @@ const nextConfig = {
       externalDir: true,
 
       serverComponentsExternalPackages: ["next-i18next"],
+      instrumentationHook: true,
     },
   
   i18n: {
