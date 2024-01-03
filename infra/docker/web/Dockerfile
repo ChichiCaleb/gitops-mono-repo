@@ -78,13 +78,14 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
-# Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
-COPY  --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
-ENTRYPOINT ["/app/entrypoint.sh"]
+COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
 
 EXPOSE 3000
 
 USER node
+
+# Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD [ "yarn", "workspace", "@calcom/web", "docker-start-web"]
 
