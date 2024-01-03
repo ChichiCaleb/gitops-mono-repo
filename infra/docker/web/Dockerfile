@@ -65,6 +65,7 @@ ENV NEXT_PUBLIC_LICENSE_CONSENT=$NEXT_PUBLIC_LICENSE_CONSENT \
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
 COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
 
+
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
                     /app/apps/web/next-i18next.config.js \
                     /app/apps/web/package.json \
@@ -75,9 +76,15 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
+COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
+RUN ["chmod", "+x", "./entrypoint.sh"]
+
 EXPOSE 3000
 
 USER node
+
+# Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD [ "yarn", "workspace", "@calcom/web", "docker-start-web"]
 
