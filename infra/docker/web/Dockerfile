@@ -61,7 +61,7 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 
-RUN ["chmod", "+x", "./entrypoint.sh"]
+RUN ["chmod", "+x", "/infra/docker/web/entrypoint.sh"]
 
 # dependency needed for prisma migration at runtime
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
