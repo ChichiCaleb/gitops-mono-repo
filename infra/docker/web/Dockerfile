@@ -26,10 +26,10 @@ ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true \
 
 WORKDIR /app
 
-ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000 
-ARG NEXTAUTH_SECRET=secret 
-ARG CALENDSO_ENCRYPTION_KEY=secret 
-ARG MAX_OLD_SPACE_SIZE=4096 
+ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000 \
+    NEXTAUTH_SECRET=secret \
+    CALENDSO_ENCRYPTION_KEY=secret \
+    MAX_OLD_SPACE_SIZE=4096 
 
 ENV NODE_ENV=production \
     NODE_OPTIONS=--max-old-space-size=${MAX_OLD_SPACE_SIZE}  
@@ -61,9 +61,7 @@ ENV NEXT_PUBLIC_LICENSE_CONSENT=$NEXT_PUBLIC_LICENSE_CONSENT \
     CALENDSO_ENCRYPTION_KEY=$CALENDSO_ENCRYPTION_KEY
     
 
-# Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
-COPY infra/docker/web/entrypoint.sh ./
-RUN ["chmod", "+x", "./entrypoint.sh"]
+# RUN ["chmod", "+x", "./entrypoint.sh"]
 
 # prisma schema to be loaded at runtime
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
@@ -80,11 +78,13 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
+# Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
+COPY infra/docker/web/entrypoint.sh ./entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
+
 EXPOSE 3000
 
 USER node
-
-ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD [ "yarn", "workspace", "@calcom/web", "docker-start-web"]
 
