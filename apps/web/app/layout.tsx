@@ -9,6 +9,7 @@ import { getLocale } from "@calcom/features/auth/lib/getLocale";
 import { IS_PRODUCTION } from "@calcom/lib/constants";
 
 import { prepareRootMetadata } from "@lib/metadata";
+import { PublicEnvProvider } from 'next-runtime-env';
 
 
 
@@ -102,8 +103,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               }
             : {}
         }>
-        {children}
+          <PublicEnvProvider>{children}</PublicEnvProvider>
+
       </body>
     </html>
   );
 }
+
+export const dynamic = 'force-dynamic';
