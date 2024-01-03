@@ -79,7 +79,7 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.ne
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 # Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
-COPY infra/docker/web/entrypoint.sh ./entrypoint.sh
+COPY  --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 EXPOSE 3000
