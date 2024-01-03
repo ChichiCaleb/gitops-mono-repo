@@ -60,8 +60,9 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y openssl curl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+COPY infra/docker/web/entrypoint.sh ./
 
-RUN ["chmod", "+x", "/infra/docker/web/entrypoint.sh"]
+RUN ["chmod", "+x", "./entrypoint.sh"]
 
 # dependency needed for prisma migration at runtime
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
