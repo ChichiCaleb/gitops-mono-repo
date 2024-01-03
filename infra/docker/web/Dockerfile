@@ -37,11 +37,14 @@ ENV NODE_ENV=production \
 
 COPY --link  . .
 
-RUN turbo prune --scope=@calcom/web --docker \
-    yarn config set httpTimeout 1200000 && \ 
-    yarn \
-    turbo run build --filter=@calcom/web... \
-    rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
+
+RUN yarn config set httpTimeout 1200000 && \ 
+    turbo prune --scope=@calcom/web --docker \
+    yarn 
+
+RUN turbo run build --filter=@calcom/web... 
+
+RUN  rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
 #############################################
 FROM node:18-slim as runner
