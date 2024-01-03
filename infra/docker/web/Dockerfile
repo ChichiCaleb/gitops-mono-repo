@@ -37,9 +37,9 @@ ENV NODE_ENV=production \
 
 COPY --link  . .
 
+RUN turbo prune --scope=@calcom/web --docker 
 
 RUN yarn config set httpTimeout 1200000 && \ 
-    turbo prune --scope=@calcom/web --docker \
     yarn 
 
 RUN turbo run build --filter=@calcom/web... 
