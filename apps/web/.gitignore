@@ -2,6 +2,7 @@
 
 # .env file
 .env
+/public/__appenv.js
 
 # dependencies
 /node_modules

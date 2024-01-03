@@ -84,6 +84,7 @@ class MyDocument extends Document<Props> {
               src="https://snippet.meticulous.ai/v1/stagingMeticulousSnippet.js"
             />
           )}
+          <script src="/__appenv.js" />
         </Head>
 
         <body
