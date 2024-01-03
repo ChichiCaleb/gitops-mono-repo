@@ -103,7 +103,7 @@ jobs:
           docker compose -f ./infra/docker/web/integration-test/compose.yml up -d calcom 
 
           echo "Waiting for the server to be healthy..."
-          sleep 60s
+          sleep 90s
 
           curl --fail http://localhost:3000 || exit 1
           
