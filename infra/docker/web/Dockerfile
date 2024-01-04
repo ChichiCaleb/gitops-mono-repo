@@ -49,7 +49,7 @@ RUN turbo prune --scope=@calcom/web --docker && \
     rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
 #############################################
-FROM base as test
+FROM base as unit-test
 
 WORKDIR /app
 
@@ -58,10 +58,15 @@ COPY --from=builder  /app/apps/web/next.config.js \
                     /app/apps/web/package.json \
                     ./
 
-COPY --from=builder  /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web ./apps/web
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/node_modules ./node_modules
+
+
+COPY --from=builder /app/setupVitest.ts ./setupVitest.ts
+COPY --from=builder /app/vitest.config.ts ./vitest.config.ts
+COPY --from=builder /app/vitest.workspace.ts ./vitest.workspace.ts
+COPY --from=builder /app/tests ./tests
    
 RUN yarn test
 
