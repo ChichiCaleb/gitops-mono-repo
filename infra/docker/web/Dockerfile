@@ -32,6 +32,11 @@ ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000 \
     MAX_OLD_SPACE_SIZE=4096 
 
 ENV NODE_ENV=production \
+    NEXT_PUBLIC_LICENSE_CONSENT=$NEXT_PUBLIC_LICENSE_CONSENT \
+    CALCOM_TELEMETRY_DISABLED=$CALCOM_TELEMETRY_DISABLED \
+    NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL\
+    NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
+    CALENDSO_ENCRYPTION_KEY=$CALENDSO_ENCRYPTION_KEY \
     NODE_OPTIONS=--max-old-space-size=${MAX_OLD_SPACE_SIZE}  
 
 
@@ -43,6 +48,22 @@ RUN turbo prune --scope=@calcom/web --docker && \
     turbo run build --filter=@calcom/web... && \
     rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
+#############################################
+FROM base as test
+
+WORKDIR /app
+
+COPY --from=builder  /app/apps/web/next.config.js \
+                    /app/apps/web/next-i18next.config.js \
+                    /app/apps/web/package.json \
+                    ./
+
+COPY --from=builder  /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web ./apps/web
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/node_modules ./node_modules
+   
+RUN yarn test
 
 #############################################
 FROM node:18-slim as runner
@@ -54,17 +75,9 @@ RUN apt-get update -qq && \
 
 WORKDIR /app
 
-ENV NEXT_PUBLIC_LICENSE_CONSENT=$NEXT_PUBLIC_LICENSE_CONSENT \
-    CALCOM_TELEMETRY_DISABLED=$CALCOM_TELEMETRY_DISABLED \
-    NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL\
-    NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
-    CALENDSO_ENCRYPTION_KEY=$CALENDSO_ENCRYPTION_KEY
-    
-
 # prisma schema to be loaded at runtime
 RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
 COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
-
 
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
                     /app/apps/web/next-i18next.config.js \
@@ -76,15 +89,15 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
-COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
-RUN ["chmod", "+x", "./entrypoint.sh"]
+# COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
+# RUN ["chmod", "+x", "./entrypoint.sh"]
 
 EXPOSE 3000
 
 USER node
 
 # Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
-ENTRYPOINT ["/app/entrypoint.sh"]
+# ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD [ "yarn", "workspace", "@calcom/web", "docker-start-web"]
 
