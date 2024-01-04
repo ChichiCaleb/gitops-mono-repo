@@ -9,7 +9,7 @@ RUN set -eux; \
 #############################################
 FROM base as builder
 
-# ensures that both local and docker turbo are aligned on the package.json version.
+# Turbo needed for prunning before yarn installation
 RUN TURBO_VERSION=$(cat package.json | jq '.dependencies["turbo"]' -r) npm i -g turbo@${TURBO_VERSION}
 
 # Optimizes for YARN installation speed
@@ -80,9 +80,9 @@ RUN apt-get update -qq && \
 
 WORKDIR /app
 
-# prisma schema to be loaded at runtime
-RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
-COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
+
+# RUN PRISMA_VERSION=$(cat packages/prisma/package.json | jq '.dependencies["prisma"]' -r) npm i prisma@${PRISMA_VERSION} 
+
 
 COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
                     /app/apps/web/next-i18next.config.js \
@@ -93,6 +93,9 @@ COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
 COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
+
+# prisma schema to be loaded at runtime
+COPY --from=builder --chown=node:node /app/packages/prisma/schema.prisma /app/packages/prisma/schema.prisma
 
 # COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
 # RUN ["chmod", "+x", "./entrypoint.sh"]
