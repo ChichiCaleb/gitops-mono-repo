@@ -66,6 +66,7 @@ jobs:
 # # NEXT JOB #######################################################################   
   unit-test:
     name: Unit Test Image
+    needs: [build-test-image]
     runs-on: ubuntu-latest
     permissions:
      contents: read
