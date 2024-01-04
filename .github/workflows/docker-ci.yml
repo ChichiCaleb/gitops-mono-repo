@@ -198,7 +198,7 @@ jobs:
 # NEXT JOB #######################################################################   
   build-final-image:
     name: Build Final Image
-    needs: [ test-integration,  scan-image]
+    needs: [unit-test, test-integration,  scan-image]
     runs-on: ubuntu-latest
 
     permissions:
