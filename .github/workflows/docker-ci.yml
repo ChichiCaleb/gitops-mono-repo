@@ -65,7 +65,7 @@ jobs:
 
 # # NEXT JOB #######################################################################   
   unit-test:
-    name: Unit Test Image
+    name: Unit tests in Docker
     needs: [build-test-image]
     runs-on: ubuntu-latest
     permissions:
@@ -95,7 +95,7 @@ jobs:
          
 
 # # NEXT JOB #######################################################################   
-  test-integration:
+  integration-test:
     name: Integration test in Compose
     needs: [build-test-image]
     runs-on: ubuntu-latest
@@ -193,7 +193,7 @@ jobs:
 # NEXT JOB #######################################################################   
   build-final-image:
     name: Build Final Image
-    needs: [unit-test, test-integration,  scan-image]
+    needs: [unit-test, integration-test,  scan-image]
     runs-on: ubuntu-latest
 
     permissions:

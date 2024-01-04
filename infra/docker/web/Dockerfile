@@ -26,7 +26,8 @@ ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true \
 
 WORKDIR /app
 
-ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000 \
+ARG NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER=http://localhost:3000 \
+    NEXT_PUBLIC_WEBAPP_URL=${NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER} \
     NEXTAUTH_SECRET=secret \
     CALENDSO_ENCRYPTION_KEY=secret \
     MAX_OLD_SPACE_SIZE=4096 
@@ -34,7 +35,7 @@ ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000 \
 ENV NODE_ENV=production \
     NEXT_PUBLIC_LICENSE_CONSENT=$NEXT_PUBLIC_LICENSE_CONSENT \
     CALCOM_TELEMETRY_DISABLED=$CALCOM_TELEMETRY_DISABLED \
-    NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL\
+    NEXT_PUBLIC_WEBAPP_URL=$WEBAPP_URL\
     NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
     CALENDSO_ENCRYPTION_KEY=$CALENDSO_ENCRYPTION_KEY \
     NODE_OPTIONS=--max-old-space-size=${MAX_OLD_SPACE_SIZE}  
@@ -83,12 +84,12 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.ne
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 # Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
-# COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
-# RUN ["chmod", "+x", "./entrypoint.sh"]
+COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
+RUN ["chmod", "+x", "./entrypoint.sh"]
 
 USER node
 
-# ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 CMD ["yarn", "workspace", "@calcom/web", "docker-start-web"]
 
