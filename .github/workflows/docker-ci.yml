@@ -91,7 +91,6 @@ jobs:
           file: infra/docker/web/Dockerfile
           target: unit-test
           cache-from: type=gha
-          cache-to: type=gha,mode=max
           platforms: linux/amd64          
          
 
@@ -139,9 +138,6 @@ jobs:
           curl --fail http://localhost:3000 || exit 1
           
          
-
-
-
 # # NEXT JOB #######################################################################   
   scan-image:
     name: Scan Image with Trivy
@@ -149,11 +145,10 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read # for actions/checkout to fetch code
-      packages: read # needed to pull docker image to ghcr.io
+      contents: read 
+      packages: read 
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
- 
-
+    
     steps:
 
       - name: Checkout git repo
@@ -250,7 +245,7 @@ jobs:
             type=semver,pattern={{version}}
 
 
-      - name: Docker Build and Push to GHCR and Docker Hub
+      - name: Docker Build and Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
           context: ./
@@ -263,9 +258,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
           
-        
-
-  #       # If PR, put image tags in the PR comments
+ #       # If PR, put image tags in the PR comments
        
       - name: Find comment for image tags
         uses: peter-evans/find-comment@v1
