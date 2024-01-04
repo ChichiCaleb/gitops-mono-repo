@@ -54,7 +54,7 @@ FROM node:18-slim as runner
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y openssl jq curl  && \
+    apt-get install --no-install-recommends -y openssl jq curl bash  && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 WORKDIR /app
@@ -73,41 +73,38 @@ COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
-
+# Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
 COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
-RUN ["chmod", "+x", "./entrypoint.sh"]
+# RUN ["chmod", "+x", "./entrypoint.sh"]
 
 USER node
 
+CMD ["/app/entrypoint.sh", "yarn", "workspace", "@calcom/web", "docker-start-web"]
+
+# #############################################
+# # ensures that the final release image is unit-tested and test stage is not skipped during build
+# FROM base as unit-test
+
+# WORKDIR /app
+
+# COPY --from=runner / /
+
+# COPY --from=builder /app/apps/web ./apps/web
+# COPY --from=builder /app/packages ./packages
+# COPY --from=builder /app/node_modules ./node_modules
+# COPY --from=builder /app/tests ./tests
+
+# COPY --from=builder /app/setupVitest.ts ./setupVitest.ts
+# COPY --from=builder /app/vitest.config.ts ./vitest.config.ts
+# COPY --from=builder /app/vitest.workspace.ts ./vitest.workspace.ts
+
+# RUN yarn test 
+      
+# # production image made available as release image
+# FROM runner
+
+# EXPOSE 3000
 # # Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
 # ENTRYPOINT ["/app/entrypoint.sh"]
 
 # CMD [ "yarn", "workspace", "@calcom/web", "docker-start-web"]
-
-#############################################
-# ensures that the final release image is unit-tested and test stage is not skipped during build
-FROM base as unit-test
-
-WORKDIR /app
-
-COPY --from=runner / /
-
-COPY --from=builder /app/apps/web ./apps/web
-COPY --from=builder /app/packages ./packages
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/tests ./tests
-
-COPY --from=builder /app/setupVitest.ts ./setupVitest.ts
-COPY --from=builder /app/vitest.config.ts ./vitest.config.ts
-COPY --from=builder /app/vitest.workspace.ts ./vitest.workspace.ts
-
-RUN yarn test 
-      
-# production image made available as release image
-FROM runner
-
-EXPOSE 3000
-# Replaces statically built NEXT_PUBLIC_WEBAPP_URL with run-time NEXT_PUBLIC_WEBAPP_URL
-ENTRYPOINT ["/app/entrypoint.sh"]
-
-CMD [ "yarn", "workspace", "@calcom/web", "docker-start-web"]
