@@ -6,6 +6,8 @@ RUN set -eux; \
     apt-get clean && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives 
 
+RUN yarn cache clean
+
 #############################################
 FROM base as unit-test
 
@@ -76,8 +78,8 @@ COPY --link  . .
 RUN turbo prune --scope=@calcom/web --docker && \
     yarn config set httpTimeout 1200000 && \ 
     yarn && \
-    turbo run build --filter=@calcom/web... && \
-    rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
+    turbo run build --filter=@calcom/web... 
+    # rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
 
 #############################################
