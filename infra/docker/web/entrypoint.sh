@@ -1,5 +1,5 @@
-#!/bin/sh
-set -x
+v#!/usr/bin/env bash
+set -Ex
 
 function apply_path {
 
@@ -11,3 +11,4 @@ function apply_path {
 
 apply_path
 echo "Starting Nextjs"
+exec "$@"
