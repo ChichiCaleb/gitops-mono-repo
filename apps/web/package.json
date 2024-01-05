@@ -18,7 +18,7 @@
     "lint:fix": "eslint . --ext .ts,.js,.tsx,.jsx --fix",
     "lint:report": "eslint . --format json --output-file ../../lint-results/web.json",
     "check-changed-files": "ts-node scripts/ts-check-changed-files.ts",
-    "docker-start-web": "yarn prisma migrate deploy --schema /app/packages/prisma/schema.prisma  && node /app/apps/web/server.js"
+    "docker-start-web": " bash env.sh && yarn prisma migrate deploy --schema /app/packages/prisma/schema.prisma  && node /app/apps/web/server.js"
   },
   "engines": {
     "node": "18"
