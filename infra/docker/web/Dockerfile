@@ -26,7 +26,7 @@ ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true \
 
 WORKDIR /app
 
-ARG NEXT_PUBLIC_WEBAPP_URL=APP_NEXT_PUBLIC_WEBAPP_URL \
+ENV NEXT_PUBLIC_WEBAPP_URL=APP_NEXT_PUBLIC_WEBAPP_URL\
     NEXTAUTH_URL=${NEXT_PUBLIC_WEBAPP_URL}/api/auth \
     NEXTAUTH_SECRET=nY37KHxYZKyLvLugpjvetWKpSE8YY6jyYOdz8rtVt/I= \
     CALENDSO_ENCRYPTION_KEY=R4LIdDnbNi1BiLov97/Pw7ITo/vH/mTcDjIsiOE9ySA= \
@@ -59,7 +59,7 @@ FROM node:18-slim as runner
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y openssl jq curl && \
+    apt-get install --no-install-recommends -y openssl jq curl bash && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 WORKDIR /app
