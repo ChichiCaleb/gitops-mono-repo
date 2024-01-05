@@ -16,7 +16,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@database:5432/calcom
+      - DATABASE_URL=postgresql://postgres:postgres@database:5432/calcom
+      - NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
     depends_on:
       - database
   

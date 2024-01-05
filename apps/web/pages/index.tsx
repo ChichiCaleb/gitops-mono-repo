@@ -2,9 +2,7 @@ import type { GetServerSidePropsContext } from "next";
 
 import { getServerSession } from "@calcom/features/auth/lib/getServerSession";
 
-import getConfig from "next/config";
-const { publicRuntimeConfig: config } = getConfig();
-console.log("config:", JSON.stringify(config));
+
 
 function RedirectPage() {
   return;
