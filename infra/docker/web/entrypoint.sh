@@ -13,8 +13,8 @@ function apply_path {
     fi
     
     # split
-    configName="$(cut -d'=' -f1 <<<"$line")"
-    configValue="$(cut -d'=' -f2 <<<"$line")"
+    configName="$(cut -d':' -f1 <<<"$line")"
+    configValue="$(cut -d':' -f2 <<<"$line")"
     # get system env
     envValue=$(env | grep "^$configName=" | grep -oe '[^=]*$');
     
