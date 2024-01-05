@@ -183,13 +183,7 @@ const nextConfig = {
       
     },
 
-    publicRuntimeConfig: {
-      app: {
-        name: process.env.NEXT_PUBLIC_WEBAPP_URL,
-        
-      },
-    },
-  
+   
   
   i18n: {
     ...i18n,
