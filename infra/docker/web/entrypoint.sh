@@ -1,13 +1,31 @@
-#!/bin/sh
-set -x
-
+#!/bin/bash
+# no verbose
+set +x
+# config
+envFilename='runtime-env.yml'
+nextFolder='./.next/'
 function apply_path {
-
-    echo "Check that we have WEBAPP_URL vars"
-    test -n "$WEBAPP_URL"
-
-    find /app/apps/web/.next \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s#NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER#$WEBAPP_URL#g"
+  # read all config file  
+  while read line; do
+    # no comment or not empty
+    if [ "${line:0:1}" == "#" ] || [ "${line}" == "" ]; then
+      continue
+    fi
+    
+    # split
+    configName="$(cut -d':' -f1 <<<"$line")"
+    configValue="$(cut -d':' -f2 <<<"$line")"
+    # get system env
+    envValue=$(env | grep "^$configName=" | grep -oe '[^=]*$');
+    
+    # if config found
+    if [ -n "$configValue" ] && [ -n "$envValue" ]; then
+      # replace all
+      echo "Replace: ${configValue} with: ${envValue}"
+      find $nextFolder \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s#$configValue#$envValue#g"
+    fi
+  done < $envFilename
 }
-
 apply_path
 echo "Starting Nextjs"
+exec "$@"

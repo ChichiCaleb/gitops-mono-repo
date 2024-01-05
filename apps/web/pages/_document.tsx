@@ -84,8 +84,7 @@ class MyDocument extends Document<Props> {
               src="https://snippet.meticulous.ai/v1/stagingMeticulousSnippet.js"
             />
           )}
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-           <script src="/__env.js" />
+       
         </Head>
 
         <body
