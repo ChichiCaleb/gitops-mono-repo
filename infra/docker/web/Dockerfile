@@ -91,7 +91,7 @@ USER node
 
 # ENTRYPOINT ["/app/entrypoint.sh"]
 
-CMD ["/app/entrypoint.sh","yarn", "workspace", "@calcom/web", "docker-start-web"]
+CMD ["yarn", "workspace", "@calcom/web", "docker-start-web"]
 
 
       
