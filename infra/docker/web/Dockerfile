@@ -26,18 +26,13 @@ ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true \
 
 WORKDIR /app
 
-ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000  \
+ARG NEXT_PUBLIC_WEBAPP_URL=http://calebs.xyz:3000  \
     NEXTAUTH_URL=${NEXT_PUBLIC_WEBAPP_URL}/api/auth \
     NEXTAUTH_SECRET=nY37KHxYZKyLvLugpjvetWKpSE8YY6jyYOdz8rtVt/I= \
     CALENDSO_ENCRYPTION_KEY=R4LIdDnbNi1BiLov97/Pw7ITo/vH/mTcDjIsiOE9ySA= \
     MAX_OLD_SPACE_SIZE=4096 
 
 ENV NODE_ENV=production \
-    # NEXT_PUBLIC_LICENSE_CONSENT=$NEXT_PUBLIC_LICENSE_CONSENT \
-    # CALCOM_TELEMETRY_DISABLED=$CALCOM_TELEMETRY_DISABLED \
-    # NEXT_PUBLIC_WEBAPP_URL=$WEBAPP_URL\
-    # NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
-    # CALENDSO_ENCRYPTION_KEY=$CALENDSO_ENCRYPTION_KEY \
     NODE_OPTIONS=--max-old-space-size=${MAX_OLD_SPACE_SIZE}  
 
 
@@ -64,7 +59,7 @@ FROM node:18-slim as runner
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y openssl jq curl bash  && \
+    apt-get install --no-install-recommends -y openssl jq curl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 WORKDIR /app
@@ -85,7 +80,7 @@ COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 # Replaces needed statically built envs with run-time env
 COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
-COPY --chown=node:node runtime-env.yml ./runtime-env.yml
+COPY --chown=node:node config.yml ./config.yml
 RUN ["chmod", "+x", "./entrypoint.sh"]
 
 USER node

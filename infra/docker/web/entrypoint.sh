@@ -2,7 +2,7 @@
 # no verbose
 set +x
 # config
-envFilename='runtime-env.yml'
+envFilename='config.yml'
 nextFolder='./.next/'
 function apply_path {
   # read all config file  
