@@ -26,10 +26,12 @@ ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true \
 
 WORKDIR /app
 
-ENV NEXT_PUBLIC_WEBAPP_URL=APP_NEXT_PUBLIC_WEBAPP_URL\
-    NEXTAUTH_URL=${NEXT_PUBLIC_WEBAPP_URL}/api/auth \
-    NEXTAUTH_SECRET=nY37KHxYZKyLvLugpjvetWKpSE8YY6jyYOdz8rtVt/I= \
-    CALENDSO_ENCRYPTION_KEY=R4LIdDnbNi1BiLov97/Pw7ITo/vH/mTcDjIsiOE9ySA= \
+ENV NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000 \
+    NEXTAUTH_URL=http://localhost:3000/api/auth \
+    NEXTAUTH_SECRET=secret \
+    CALENDSO_ENCRYPTION_KEY=secret \
+    NEXT_PUBLIC_LICENSE_CONSENT=$NEXT_PUBLIC_LICENSE_CONSENT \
+    CALCOM_TELEMETRY_DISABLED=$CALCOM_TELEMETRY_DISABLED \
     MAX_OLD_SPACE_SIZE=4096 
 
 ENV NODE_ENV=production \
@@ -80,6 +82,7 @@ COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 # Replaces needed statically built envs with run-time env
 COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
+COPY --chown=node:node placeholder.yml ./placeholder.yml
 RUN ["chmod", "+x", "./entrypoint.sh"]
 
 USER node
