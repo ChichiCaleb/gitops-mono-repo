@@ -78,7 +78,7 @@ COPY --from=builder --chown=node:node  /app/apps/web/next.config.js \
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=node:node  /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=node:node  /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=node:node  /app/apps/web/public ./standalone/public
+COPY --from=builder --chown=node:node  /app/apps/web/public ./apps/web/public
 
 # Replaces needed statically built envs with run-time env
 COPY --chown=node:node infra/docker/web/entrypoint.sh ./entrypoint.sh
