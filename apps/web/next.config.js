@@ -174,9 +174,9 @@ const nextConfig = {
   
   experimental: {
       
-      // outputFileTracingRoot: workspaceRoot ,
-      outputFileTracingRoot:path.join(__dirname, '../../') ,
-      // outputFileTracingIncludes:{},
+      outputFileTracingRoot: workspaceRoot ,
+   
+      outputFileTracingIncludes:{'/apps/web': ['./public/**/*']},
       
      
       externalDir: true,
