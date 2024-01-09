@@ -174,8 +174,10 @@ const nextConfig = {
   
   experimental: {
       
-      outputFileTracingRoot: workspaceRoot ,
-      // esmExternals: true,
+      // outputFileTracingRoot: workspaceRoot ,
+      outputFileTracingRoot:path.join(__dirname, '../../') ,
+      // outputFileTracingIncludes:{},
+      
      
       externalDir: true,
 
