@@ -174,9 +174,10 @@ const nextConfig = {
   
   experimental: {
       
-      outputFileTracingRoot: workspaceRoot ,
    
-      outputFileTracingIncludes:{'/apps/web': ['./public/**/*']},
+      outputFileTracingRoot: workspaceRoot ,
+      outputFileTracingIncludes:{'/apps/web': ['./public']},
+      outputFileTracingIncludes:{'/apps/web/public': ['./favicon.ico']},
       
      
       externalDir: true,
